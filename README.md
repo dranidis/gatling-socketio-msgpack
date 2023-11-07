@@ -16,3 +16,16 @@ It includes:
 * sample [Simulation](https://gatling.io/docs/gatling/reference/current/general/concepts/#simulation) class,
   demonstrating sufficient Gatling functionality
 * proper source file layout
+
+
+## Run
+
+Run simulations.
+```
+mvn gatling:test
+```
+
+Run the Gatling Recorder
+```
+mvn galing:recorder
+```
