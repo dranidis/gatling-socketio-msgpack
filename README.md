@@ -1,6 +1,23 @@
 Gatling plugin for Maven - Java demo project
 ============================================
 
+## Socket.io connection
+
+**IMPORTANT:**
+Requires in the connect string: 
+
+```java
+.connect("/socket.io/?EIO=4&transport=websocket")
+```
+
+## Configuration file
+
+In file: `src/test/resources/gatling.conf`
+
+
+
+## Rest
+
 A simple showcase of a Maven project using the Gatling plugin for Maven. Refer to the plugin documentation
 [on the Gatling website](https://gatling.io/docs/current/extensions/maven_plugin/) for usage.
 
@@ -20,12 +37,13 @@ It includes:
 
 ## Run
 
-Run simulations.
+### Run simulations.
 ```
 mvn gatling:test
 ```
 
-Run the Gatling Recorder
+### Run the Gatling Recorder
 ```
 mvn galing:recorder
 ```
+The recorder does not capture websocket events.

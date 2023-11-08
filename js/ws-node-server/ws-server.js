@@ -1,4 +1,15 @@
 // https://socket.io/get-started/chat
+// 
+// Starts a web server at port 3000
+// and a websocket server at the same port.
+// 
+// The websocket server is used to send and receive messages
+// from the client with the event name "message".
+//
+// root is redirected to index.html that provides a form
+// to send messages to the server and display messages
+// received from the server.
+//
 
 const express = require("express");
 const http = require("http");
@@ -24,10 +35,15 @@ app.get("/", (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  console.log("a user connected");
+  console.log("a user connected to the socket.io server: " + socket.id);
 
-  socket.on("chat message", (msg) => {
+  socket.on("message", (msg) => {
     console.log("message: " + msg);
+    io.emit('message', "they say: " + msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected: ' + socket.id);
   });
 });
 
