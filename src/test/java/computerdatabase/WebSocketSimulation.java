@@ -10,11 +10,11 @@ public class WebSocketSimulation extends Simulation {
 
         HttpProtocolBuilder httpProtocol = http
                         .baseUrl("http://localhost:3000")
-                        .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                        .doNotTrackHeader("1")
-                        .acceptLanguageHeader("en-US,en;q=0.5")
-                        .acceptEncodingHeader("gzip, deflate")
-                        .userAgentHeader("Gatling2")
+                        // .acceptHeader("text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                        // .doNotTrackHeader("1")
+                        // .acceptLanguageHeader("en-US,en;q=0.5")
+                        // .acceptEncodingHeader("gzip, deflate")
+                        // .userAgentHeader("Gatling2")
                         // .wsBaseUrl("wss://ws.postman-echo.com");
                         .wsBaseUrl("ws://localhost:3000");
 

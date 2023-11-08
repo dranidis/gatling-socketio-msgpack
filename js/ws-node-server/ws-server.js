@@ -7,12 +7,16 @@ const cors = require("cors");
 const app = express();
 app.use(cors()); // Enable CORS for all routes
 
-const server = http.createServer(app);
+const httpServer = http.createServer(app);
 const { Server } = require("socket.io");
 
-const io = new Server(server, {
+const io = new Server(httpServer, {
   transports: ["websocket", "polling"],
   // path: "/raw", // This specifies the namespace or path);
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  }
 });
 
 app.get("/", (req, res) => {
@@ -27,6 +31,6 @@ io.on("connection", (socket) => {
   });
 });
 
-server.listen(3000, () => {
+httpServer.listen(3000, () => {
   console.log("listening on *:3000");
 });
