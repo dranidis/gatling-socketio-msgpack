@@ -24,26 +24,30 @@ public class WebSocketSimulation extends Simulation {
         ;
 
         ScenarioBuilder scene = scenario("WebSocket")
-                        // .exec(http("firstRequest").get("/"))
+                        .exec(http("firstRequest").get("/"))
+                        .pause(1)
+                        .exec(session -> session.set("id", "Gatling" + session.userId()))
                         .exec(ws("openSocket")
                                         //
-                                        .connect("/socket.io/?EIO=4&transport=websocket")
+                                        .connect("/socket.io/?EIO=4&transport=websocket&sid=#{id}")
                                         // .connect("/raw")
                                         //
                                         .onConnected(exec(session -> {
                                                 System.out.println("CONNECTED");
-                                                System.out.println(session);
+                                                System.out.println(session.userId());
                                                 return session;
-                                        }).exec(ws("sendMessage")
-                                                        .sendText("message Hi")
-                                                        .await(30).on(
-                                                                        ws.checkTextMessage("check1")
-                                                                                        .check(regex(".*Hi.*").saveAs(
-                                                                                                        "myMessage"))))
-                                                        .exec(session -> {
-                                                                System.out.println(session);
-                                                                return session;
-                                                        }).exec(ws("closeConnection").close())));
+                                        })))
+                        .pause(1)
+                        .exec(ws("sendMessage")
+                                        .sendText("message Hi")
+                                        .await(30).on(
+                                                        ws.checkTextMessage("check1")
+                                                                        .check(regex(".*Hi.*").saveAs(
+                                                                                        "myMessage"))))
+                        .exec(session -> {
+                                System.out.println(session);
+                                return session;
+                        }).exec(ws("closeConnection").close());
 
         {
                 setUp(scene.injectOpen(atOnceUsers(1)).protocols(httpProtocol));
