@@ -2,7 +2,6 @@
 <html>
 
 <head>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Socket.IO chat</title>
   <style>
     body {
@@ -63,30 +62,37 @@
 </head>
 
 <body>
+  <h2>Other client</h2>
   <ul id="messages"></ul>
   <form id="form" action="">
     <input id="input" autocomplete="off" /><button>Send</button>
   </form>
 
+  <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+
   <script>
-    const socket = io("ws://localhost:10000/.ws");
+    var socket = io("ws://localhost:3000");
 
-    // Send a "Hello" message when the button is clicked
-    document.querySelector("#send-button").addEventListener("click", () => {
-      const message = document.querySelector("#message-input").value;
-      socket.emit("message", message);
+    var form = document.getElementById('form');
+    var input = document.getElementById('input');
+    var messages = document.getElementById('messages');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (input.value) {
+        socket.emit('message', input.value);
+        input.value = '';
+      }
     });
 
-    // Receive and display messages from the server
-    socket.on("message", (message) => {
-      const messageElement = document.createElement("li");
-      messageElement.textContent = message;
-      document.querySelector("#message-list").appendChild(messageElement);
+    socket.on('message', function (msg) {
+      var item = document.createElement('li');
+      item.textContent = msg;
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
     });
   </script>
-
 
 </body>
 
