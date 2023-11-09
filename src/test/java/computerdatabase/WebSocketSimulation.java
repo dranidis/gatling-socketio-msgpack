@@ -37,24 +37,24 @@ public class WebSocketSimulation extends Simulation {
                         .get("/socket.io/?EIO=4&transport=polling&t=" + timestamp)
                         .check(status().is(200),
                                         regex("\"sid\":\"([^\"]+)").saveAs("sid")))
-                                                        .exec(session -> printSessionValue(session, "sid"));
+                        .exec(session -> printSessionValue(session, "sid"));
 
         ChainBuilder pollingChain2 = exec(
                         http("polling2").post("/socket.io/?EIO=4&transport=polling&t=" + timestamp + "&sid=#{sid}")
                                         .body(StringBody("40"))
                                         .check(status().is(200),
                                                         regex(".*").saveAs("response")))
-                                                                        .exec(session -> printSessionValue(session,
-                                                                                        "response"))
-                                                                        .exec(http("polling3")
-                                                                                        .get("/socket.io/?EIO=4&transport=polling&t="
-                                                                                                        + timestamp
-                                                                                                        + "&sid=#{sid}")
-                                                                                        .check(status().is(200),
-                                                                                                        regex(".*")
-                                                                                                                        .saveAs("response2")))
-                                                                        .exec(session -> printSessionValue(session,
-                                                                                        "response2"));
+                        .exec(session -> printSessionValue(session,
+                                        "response"))
+                        .exec(http("polling3")
+                                        .get("/socket.io/?EIO=4&transport=polling&t="
+                                                        + timestamp
+                                                        + "&sid=#{sid}")
+                                        .check(status().is(200),
+                                                        regex(".*")
+                                                                        .saveAs("response2")))
+                        .exec(session -> printSessionValue(session,
+                                        "response2"));
 
         ScenarioBuilder scene = scenario("WebSocket")
                         .exec(handshake, pollingChain2)
@@ -69,7 +69,8 @@ public class WebSocketSimulation extends Simulation {
                                                 System.out.println("CONNECTED");
                                                 // System.out.println("" + session.get("connectionResponse"));
                                                 return session;
-                                        })))
+                                        }).exec(ws("sendAfterConnection")
+                                                        .sendText("[\"message\", \"b\"]"))))
                         .exec(ws("sendMessage")
                                         .sendText("[\"message\", \"a\"]")
                                         .await(30).on(
