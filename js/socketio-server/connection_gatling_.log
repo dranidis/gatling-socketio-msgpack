@@ -1,0 +1,50 @@
+  socket.io:server initializing namespace / 
+  socket.io:server creating http server and binding to 3000 
+  socket.io:server creating engine.io instance with opts {"transports":["websocket","polling"],"cors":{"origin":"*","methods":["GET","POST"]},"XXXXXXXXXXXXXXXXXXespaces":false,"path":"/socket.io"} 
+  socket.io:server attaching client serving req handler 
+  engine applying middleware n°1 
+  engine writing headers: {"XXXXXXXXXXXXXXXXXX-Origin":"*"} 
+  engine handshaking client "XXXXXXXXXXXXXXXXXX" 
+  engine:transport readyState updated from undefined to open (websocket) 
+  engine:socket readyState updated from undefined to opening 
+  engine:socket readyState updated from opening to open 
+  engine:socket sending packet "open" ({"sid":"XXXXXXXXXXXXXXXXXX","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) 
+  engine:socket flushing buffer to transport 
+  engine:ws writing "0{"sid":"XXXXXXXXXXXXXXXXXX","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" 
+  engine:transport setting request 
+  socket.io:server incoming connection with id XXXXXXXXXXXXXXXXXX 
+  engine:ws received "40" 
+  engine:socket received packet message 
+  socket.io-parser decoded 0 as {"type":0,"nsp":"/"} 
+  socket.io:client connecting to namespace / 
+  socket.io:namespace adding socket to nsp / 
+  socket.io:socket socket connected - writing packet 
+  socket.io:socket join room XXXXXXXXXXXXXXXXXX 
+  socket.io-parser encoding packet {"type":0,"data":{"sid":"XXXXXXXXXXXXXXXXXX"},"nsp":"/"} 
+  socket.io-parser encoded {"type":0,"data":{"sid":"XXXXXXXXXXXXXXXXXX"},"nsp":"/"} as 0{"sid":"XXXXXXXXXXXXXXXXXX"} 
+  engine:socket sending packet "message" (0{"sid":"XXXXXXXXXXXXXXXXXX"}) 
+  engine:socket flushing buffer to transport 
+  engine:ws writing "40{"sid":"XXXXXXXXXXXXXXXXXX"}" 
+a user connected to the socket.io server: XXXXXXXXXXXXXXXXXX
+  engine:ws received "42["message","Hi"]" 
+  engine:socket received packet message 
+  socket.io-parser decoded 2["message","Hi"] as {"type":2,"nsp":"/","data":["message","Hi"]} 
+  socket.io:socket got packet {"type":2,"nsp":"/","data":["message","Hi"]} 
+  socket.io:socket emitting event ["message","Hi"] 
+  socket.io:socket dispatching an event ["message","Hi"] 
+packet: message,Hi
+message: Hi
+  socket.io-parser encoding packet {"type":2,"data":["message","they say: Hi"],"nsp":"/"} 
+  socket.io-parser encoded {"type":2,"data":["message","they say: Hi"],"nsp":"/"} as 2["message","they say: Hi"] 
+  engine:socket sending packet "message" (2["message","they say: Hi"]) 
+  engine:socket flushing buffer to transport 
+  engine:ws received "41" 
+  engine:socket received packet message 
+  socket.io-parser decoded 1 as {"type":1,"nsp":"/"} 
+  socket.io:socket got packet {"type":1,"nsp":"/"} 
+  socket.io:socket got disconnect packet 
+  socket.io:socket closing socket - reason client namespace disconnect 
+user disconnected: XXXXXXXXXXXXXXXXXX
+  engine:transport readyState updated from open to closed (websocket) 
+  engine:socket readyState updated from open to closed 
+  socket.io:client client close with reason transport close 

@@ -1,0 +1,50 @@
+  socket.io:server initializing namespace / +0ms
+  socket.io:server creating http server and binding to 3000 +4ms
+  socket.io:server creating engine.io instance with opts {"transports":["websocket","polling"],"cors":{"origin":"*","methods":["GET","POST"]},"cleanupEmptyChildNamespaces":false,"path":"/socket.io"} +5ms
+  socket.io:server attaching client serving req handler +2ms
+  engine applying middleware n°1 +0ms
+  engine writing headers: {"Access-Control-Allow-Origin":"*"} +3ms
+  engine handshaking client "BKaw3vd5w5QOiIr1AAAA" +2ms
+  engine:transport readyState updated from undefined to open (websocket) +0ms
+  engine:socket readyState updated from undefined to opening +0ms
+  engine:socket readyState updated from opening to open +1ms
+  engine:socket sending packet "open" ({"sid":"BKaw3vd5w5QOiIr1AAAA","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}) +0ms
+  engine:socket flushing buffer to transport +0ms
+  engine:ws writing "0{"sid":"BKaw3vd5w5QOiIr1AAAA","upgrades":[],"pingInterval":25000,"pingTimeout":20000,"maxPayload":1000000}" +0ms
+  engine:transport setting request +3ms
+  socket.io:server incoming connection with id BKaw3vd5w5QOiIr1AAAA +4s
+  engine:ws received "40" +16ms
+  engine:socket received packet message +18ms
+  socket.io-parser decoded 0 as {"type":0,"nsp":"/"} +0ms
+  socket.io:client connecting to namespace / +0ms
+  socket.io:namespace adding socket to nsp / +0ms
+  socket.io:socket socket connected - writing packet +0ms
+  socket.io:socket join room 0_5He9cOMB9Nc_5jAAAB +2ms
+  socket.io-parser encoding packet {"type":0,"data":{"sid":"0_5He9cOMB9Nc_5jAAAB"},"nsp":"/"} +7ms
+  socket.io-parser encoded {"type":0,"data":{"sid":"0_5He9cOMB9Nc_5jAAAB"},"nsp":"/"} as 0{"sid":"0_5He9cOMB9Nc_5jAAAB"} +0ms
+  engine:socket sending packet "message" (0{"sid":"0_5He9cOMB9Nc_5jAAAB"}) +7ms
+  engine:socket flushing buffer to transport +2ms
+  engine:ws writing "40{"sid":"0_5He9cOMB9Nc_5jAAAB"}" +10ms
+a user connected to the socket.io server: 0_5He9cOMB9Nc_5jAAAB
+  engine:ws received "42["message","Hi"]" +789ms
+  engine:socket received packet message +789ms
+  socket.io-parser decoded 2["message","Hi"] as {"type":2,"nsp":"/","data":["message","Hi"]} +792ms
+  socket.io:socket got packet {"type":2,"nsp":"/","data":["message","Hi"]} +793ms
+  socket.io:socket emitting event ["message","Hi"] +0ms
+  socket.io:socket dispatching an event ["message","Hi"] +0ms
+packet: message,Hi
+message: Hi
+  socket.io-parser encoding packet {"type":2,"data":["message","they say: Hi"],"nsp":"/"} +1ms
+  socket.io-parser encoded {"type":2,"data":["message","they say: Hi"],"nsp":"/"} as 2["message","they say: Hi"] +1ms
+  engine:socket sending packet "message" (2["message","they say: Hi"]) +3ms
+  engine:socket flushing buffer to transport +0ms
+  engine:ws received "41" +1s
+  engine:socket received packet message +1s
+  socket.io-parser decoded 1 as {"type":1,"nsp":"/"} +1s
+  socket.io:socket got packet {"type":1,"nsp":"/"} +1s
+  socket.io:socket got disconnect packet +0ms
+  socket.io:socket closing socket - reason client namespace disconnect +1ms
+user disconnected: 0_5He9cOMB9Nc_5jAAAB
+  engine:transport readyState updated from open to closed (websocket) +2s
+  engine:socket readyState updated from open to closed +6ms
+  socket.io:client client close with reason transport close +2s
