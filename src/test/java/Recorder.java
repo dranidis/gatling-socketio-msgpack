@@ -5,10 +5,10 @@ import scala.Option;
 public class Recorder {
   public static void main(String[] args) {
     RecorderPropertiesBuilder props = new RecorderPropertiesBuilder()
-      .simulationsFolder(IDEPathHelper.mavenSourcesDirectory.toString())
-      .resourcesFolder(IDEPathHelper.mavenResourcesDirectory.toString())
-      .simulationPackage("computerdatabase")
-      .simulationFormatJava();
+        .simulationsFolder(IDEPathHelper.mavenSourcesDirectory.toString())
+        .resourcesFolder(IDEPathHelper.mavenResourcesDirectory.toString())
+        .simulationPackage("socketio")
+        .simulationFormatJava();
 
     GatlingRecorder.fromMap(props.build(), Option.apply(IDEPathHelper.recorderConfigFile));
   }

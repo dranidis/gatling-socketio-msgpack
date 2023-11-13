@@ -5,7 +5,6 @@
 ```sh
 cd js/socketio-server
 node index_simple.js
-
 ```
 
 Output:
@@ -13,6 +12,8 @@ Output:
 ```
 socket.io server listening on port 3000
 ```
+
+Alternatively, you may run the server found in `js/express-socketio-server` that creates both a web server at `localhost:3000` and a socket-io server at the same port. The `index.html` page acts as a client for the socket-io server.
 
 ## Run
 
@@ -25,7 +26,7 @@ socket.io server listening on port 3000
 or provide the simulation class (if there are other simulation classes)
 
 ```
-./mvnw gatling:test  -Dgatling.simulationClass=computerdatabase.WebsocketExampleSimulation
+./mvnw gatling:test  -Dgatling.simulationClass=socketio.SocketIOSimulation
 ```
 
 ### Run the Gatling Recorder

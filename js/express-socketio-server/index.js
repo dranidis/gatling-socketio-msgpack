@@ -1,4 +1,3 @@
-// https://socket.io/get-started/chat
 //
 // Starts a web server at port 3000
 // and a websocket server at the same port.
@@ -39,7 +38,7 @@ io.on("connection", (socket) => {
 
   socket.on("message", (msg) => {
     console.log("message: " + msg);
-    io.emit("message", "they say: " + msg);
+    io.emit("broadcast", "they say: " + msg);
   });
 
   socket.on("disconnect", () => {
