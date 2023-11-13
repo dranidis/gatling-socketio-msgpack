@@ -22,4 +22,21 @@ io.on("connection", (socket) => {
   });
 });
 
+const namespace = io.of("/admin");
+
+namespace.on("connection", (socket) => {
+  console.log("someone connected to the admin namespace: " + socket.id);
+
+  socket.on("message", (msg) => {
+    console.log("message: " + msg);
+    namespace.emit("broadcast", "admin they say: " + msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("someone disconnected from the admin namespace: " + socket.id);
+  });
+});
+
 io.listen(3000);
+
+console.log("socket.io server listening on port 3000");

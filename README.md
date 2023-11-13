@@ -1,49 +1,54 @@
-Gatling plugin for Maven - Java demo project
-============================================
+# A demo maven project for load testing Socket.IO with Gatling
 
-## Socket.io connection
+## Socket.IO server
 
-**IMPORTANT:**
-Requires in the connect string: 
+```sh
+cd js/socketio-server
+node index_simple.js
 
-```java
-.connect("/socket.io/?EIO=4&transport=websocket")
 ```
+
+Output:
+
+```
+socket.io server listening on port 3000
+```
+
+## Run
+
+### Run a simulations
+
+```sh
+./mvnw gatling:test
+```
+
+or provide the simulation class (if there are other simulation classes)
+
+```
+./mvnw gatling:test  -Dgatling.simulationClass=computerdatabase.WebsocketExampleSimulation
+```
+
+### Run the Gatling Recorder
+
+```sh
+./mvnw gatling:recorder
+```
+
+The recorder does not capture websocket events.
 
 ## Configuration file
 
 In file: `src/test/resources/gatling.conf`
+you can uncomment the lines for which you wish to have DEBUG output.
 
+## Gatling Maven project
 
-
-## Rest
-
-A simple showcase of a Maven project using the Gatling plugin for Maven. Refer to the plugin documentation
+Refer to the plugin documentation
 [on the Gatling website](https://gatling.io/docs/current/extensions/maven_plugin/) for usage.
 
-This project is written in Java, others are available for [Kotlin](https://github.com/gatling/gatling-maven-plugin-demo-kotlin)
-and [Scala](https://github.com/gatling/gatling-maven-plugin-demo-scala).
+This project includes:
 
-It includes:
-
-* [Maven Wrapper](https://maven.apache.org/wrapper/), so that you can immediately run Maven with `./mvnw` without having
+- [Maven Wrapper](https://maven.apache.org/wrapper/), so that you can immediately run Maven with `./mvnw` without having
   to install it on your computer
-* minimal `pom.xml`
-* latest version of `io.gatling:gatling-maven-plugin` applied
-* sample [Simulation](https://gatling.io/docs/gatling/reference/current/general/concepts/#simulation) class,
-  demonstrating sufficient Gatling functionality
-* proper source file layout
-
-
-## Run
-
-### Run simulations.
-```
-mvn gatling:test
-```
-
-### Run the Gatling Recorder
-```
-mvn galing:recorder
-```
-The recorder does not capture websocket events.
+- minimal `pom.xml`
+- latest version of `io.gatling:gatling-maven-plugin` applied
