@@ -10,7 +10,7 @@ import io.gatling.javaapi.http.*;
 public class SocketIOSimulation extends Simulation {
 
   HttpProtocolBuilder httpProtocol = http
-      .wsBaseUrl("ws://localhost:3000")
+      .wsBaseUrl("ws://localhost:3333")
       .wsReconnect()
       .wsMaxReconnects(5)
       .wsAutoReplySocketIo4();
@@ -18,7 +18,7 @@ public class SocketIOSimulation extends Simulation {
   ScenarioBuilder scene = scenario("WebSocket")
       // connect to the default namespace
       .exec(connectΤοSocketIo)
-      .exec(debugSessionValues("sid", "server_sid", "namespace"))
+      .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // repeat some times
       .repeat(10, "counter").on(
           // send a message to the default namespace and 
@@ -29,7 +29,23 @@ public class SocketIOSimulation extends Simulation {
               "Hi #{counter}",
               "broadcast",
               "aResponse"))
-                  .exec(debugSessionValues("aResponse"))
+                  .exec(debugSessionValues("aResponse", "whole_message"))
+                  .pause(1))
+      //disconnect from the default namespace
+      .exec(disconnectFromSocketIo);
+
+  ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
+      // connect to the default namespace
+      .exec(connectΤοSocketIo)
+      .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
+      // repeat some times
+      .repeat(10, "counter").on(
+          // send a message to the default namespace and 
+          // expect a server message at the event broadcast
+          // save the message at the session key aResponse
+          exec(sendMessage(
+              "message",
+              "Hi I am not expecting a response #{counter}"))
                   .pause(1))
       //disconnect from the default namespace
       .exec(disconnectFromSocketIo);
@@ -37,7 +53,7 @@ public class SocketIOSimulation extends Simulation {
   ScenarioBuilder adminScene = scenario("WebSocket admin")
       // connect to the admin namespace
       .exec(connectΤοSocketIo("admin"))
-      .exec(debugSessionValues("sid", "server_sid", "namespace"))
+      .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // do if the session contains the key server_sid
       .doIf(session -> session.contains("server_sid"))
       .then(
@@ -46,11 +62,11 @@ public class SocketIOSimulation extends Simulation {
           // save the message at the session key adminResponse
           exec(sendMessageWithCheck(
               "message",
-              "Hi",
+              "Hi to admin",
               "broadcast",
               "adminResponse",
               "admin"))
-                  .exec(debugSessionValues("adminResponse"))
+                  .exec(debugSessionValues("adminResponse", "whole_message"))
                   //disconnect from the admin namespace
                   .exec(disconnectFromSocketIo("admin")));
 
@@ -81,6 +97,9 @@ public class SocketIOSimulation extends Simulation {
         // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
         // stressPeakUsers(1000).during(20) // 8  
         )
+        //
+        ,
+        sceneNoChecks.injectOpen(atOnceUsers(1))
 
     ).protocols(httpProtocol);
   }

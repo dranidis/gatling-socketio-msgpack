@@ -1,6 +1,6 @@
 # A demo maven project for load testing Socket.IO with Gatling
 
-The simulation connects to a local Socket.IO server at port 3000.
+The simulation connects to a local Socket.IO server at port 3333.
 
 ## Socket.IO server
 
@@ -12,10 +12,10 @@ node index_simple.js
 Output:
 
 ```
-socket.io server listening on port 3000
+socket.io server listening on port 3333
 ```
 
-Alternatively, you may run the server found in `js/express-socketio-server` that creates both a web server at `localhost:3000` and a socket-io server at the same port. The `index.html` page acts as a client for the socket-io server.
+Alternatively, you may run the server found in `js/express-socketio-server` that creates both a web server at `localhost:3333` and a socket-io server at the same port. The `index.html` page acts as a client for the socket-io server.
 
 ## Run
 

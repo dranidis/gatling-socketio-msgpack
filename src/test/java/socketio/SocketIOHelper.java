@@ -45,7 +45,8 @@ public class SocketIOHelper {
    */
   public static WsFrameCheck checkWSConnectionMessageSID = ws
       .checkTextMessage("check Socket.IO connection reply: save sid")
-      .check(regex("^0\\{\"sid\":\"([^\"]+)").saveAs("sid"));
+      .check(regex("^0\\{\"sid\":\"([^\"]+)").saveAs("sid"),
+          regex("(.*)").saveAs("whole_message"));
 
   /**
    * Checks for a mesage: "40{"sid":"JnYOfDWvpdm1zrCEAAAB"}"
@@ -57,12 +58,14 @@ public class SocketIOHelper {
   public static WsFrameCheck checkSocketIOConnectionMessageSID = ws
       .checkTextMessage("check Socket.IO connection reply: save sid")
       .check(regex("^40.*\\{\"sid\":\"([^\"]+)").saveAs("server_sid"),
-          regex("^40(.*),*\\{").saveAs("namespace"));
+          regex("^40(.*),*\\{").saveAs("namespace"),
+          regex("(.*)").saveAs("whole_message"));
 
   static WsFrameCheck checkEventMessage(String eventName, String toSessionKey) {
     return ws.checkTextMessage("check server message after request")
         .check(regex(".*" + eventName + "...([^\"]*)")
-            .saveAs(toSessionKey));
+            .saveAs(toSessionKey),
+            regex("(.*)").saveAs("whole_message"));
   }
 
   /**
@@ -109,9 +112,13 @@ public class SocketIOHelper {
    */
   public static ChainBuilder disconnectFromSocketIo = disconnectFromSocketIo("");
 
-  static ChainBuilder sendMessage(String eventName, String message) {
+  static ChainBuilder sendMessage(String eventName, String message, String nameSpace) {
     return exec(ws("send Socket.IO message")
-        .sendText(eventFrame(eventName, message, "")));
+        .sendText(eventFrame(eventName, message, nameSpace)));
+  }
+
+  static ChainBuilder sendMessage(String eventName, String message) {
+    return sendMessage(eventName, message, "");
   }
 
   /**
@@ -142,6 +149,17 @@ public class SocketIOHelper {
         .on(checkEventMessage(responseEventName, toSessionKey)));
   }
 
+  /**
+   * Sends a message to the default namespace of Socket.IO server and expects a
+   * message with the responseEventName as an event name and saves the message in
+   * the session with the toSessionKey.
+   * 
+   * @param eventName
+   * @param message
+   * @param responseEventName
+   * @param toSessionKey
+   * @return
+   */
   static ChainBuilder sendMessageWithCheck(
       String eventName,
       String message,

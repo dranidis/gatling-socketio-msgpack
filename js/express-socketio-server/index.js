@@ -1,5 +1,5 @@
 //
-// Starts a web server at port 3000
+// Starts a web server at port 3333
 // and a websocket server at the same port.
 //
 // The websocket server is used to send and receive messages
@@ -46,6 +46,21 @@ io.on("connection", (socket) => {
   });
 });
 
-httpServer.listen(3000, () => {
-  console.log("listening on *:3000");
+const namespace = io.of("/admin");
+
+namespace.on("connection", (socket) => {
+  console.log("someone connected to the admin namespace: " + socket.id);
+
+  socket.on("message", (msg) => {
+    console.log("message: " + msg);
+    namespace.emit("broadcast", "admin they say: " + msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("someone disconnected from the admin namespace: " + socket.id);
+  });
+});
+
+httpServer.listen(3333, () => {
+  console.log("listening on *:3333");
 });

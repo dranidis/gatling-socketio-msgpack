@@ -37,6 +37,6 @@ namespace.on("connection", (socket) => {
   });
 });
 
-io.listen(3000);
+io.listen(3333);
 
-console.log("socket.io server listening on port 3000");
+console.log("socket.io server listening on port 3333");
