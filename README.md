@@ -1,5 +1,7 @@
 # A demo maven project for load testing Socket.IO with Gatling
 
+The simulation connects to a local Socket.IO server at port 3000.
+
 ## Socket.IO server
 
 ```sh
