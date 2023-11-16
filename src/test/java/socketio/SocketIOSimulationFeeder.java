@@ -23,11 +23,11 @@ public class SocketIOSimulationFeeder extends Simulation {
 
       .feed(jsonFile("data.json").circular())
       .foreach("#{messages}", "message").on(
-          exec(sendMessage(
+          exec(sendTextSocketIO(ws("send Socket.IO message"),
               "#{message.event}",
               "#{message.msg}",
-              "#{message.nsp}")
-                  .pause(1))
+              "#{message.nsp}"))
+                  .pause(3)
       //
       )
       // disconnect from the default namespace
@@ -38,7 +38,7 @@ public class SocketIOSimulationFeeder extends Simulation {
 
     setUp(
 
-        sceneNoChecks.injectOpen(atOnceUsers(1))
+        sceneNoChecks.injectOpen(atOnceUsers(2))
 
     ).protocols(httpProtocol);
   }

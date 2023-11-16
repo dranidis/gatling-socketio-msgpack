@@ -24,13 +24,13 @@ public class SocketIOSimulation extends Simulation {
           // send a message to the default namespace and
           // expect a server message at the event broadcast
           // save the message at the session key aResponse
-          exec(sendMessageWithCheck(
+          exec(sendTextSocketIO(ws("send Socket.IO message"),
               "message",
-              "Hi #{counter}",
-              "broadcast",
-              "aResponse"))
-              .exec(debugSessionValues("aResponse", "whole_message"))
-              .pause(1))
+              "Hi #{counter}")
+                  .await(30)
+                  .on(checkEventMessage("broadcast", "aResponse")))
+                      .exec(debugSessionValues("aResponse", "whole_message"))
+                      .pause(1))
       // disconnect from the default namespace
       .exec(disconnectFromSocketIo);
 
@@ -41,13 +41,11 @@ public class SocketIOSimulation extends Simulation {
       .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // repeat some times
       .repeat(2, "counter").on(
-          // send a message to the default namespace and
-          // expect a server message at the event broadcast
-          // save the message at the session key aResponse
-          exec(sendMessage(
+          // send a message to the default namespace 
+          exec(sendTextSocketIO(ws("send Socket.IO message"),
               "message",
               "I am #{sid} counter: #{counter} time: #{time} data: #{data}"))
-              .pause(1))
+                  .pause(1))
       // disconnect from the default namespace
       .exec(disconnectFromSocketIo);
 
@@ -61,21 +59,24 @@ public class SocketIOSimulation extends Simulation {
           // send a message to the admin namespace and
           // expect a server message at the event broadcast
           // save the message at the session key adminResponse
-          exec(sendMessageWithCheck(
+          exec(sendTextSocketIO(ws("send Socket.IO message"),
               "message",
-              "Hi to admin",
-              "broadcast",
-              "adminResponse",
-              "admin"))
-              .exec(debugSessionValues("adminResponse", "whole_message"))
-              // disconnect from the admin namespace
-              .exec(disconnectFromSocketIo("admin")));
+              "Hi #{counter}",
+              "admin")
+                  .await(30)
+                  .on(checkEventMessage("broadcast", "adminResponse")))
+                      .exec(debugSessionValues("adminResponse", "whole_message"))
+                      // disconnect from the admin namespace
+                      .exec(disconnectFromSocketIo("admin")));
 
   {
     setDebug(true);
 
     setUp(
-        // adminScene.injectOpen(atOnceUsers(1)
+        adminScene.injectOpen(
+
+            atOnceUsers(1)
+
         // // nothingFor(4), // 1
         // // atOnceUsers(10), // 2
         // // rampUsers(10).during(5), // 3
@@ -85,10 +86,10 @@ public class SocketIOSimulation extends Simulation {
         // // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
         // // stressPeakUsers(1000).during(20) // 8
 
-        // )
-        // //
-        // ,
-        // scene.injectOpen(atOnceUsers(1)
+        ), scene.injectOpen(
+
+            atOnceUsers(1)
+
         // // nothingFor(4), // 1
         // // atOnceUsers(10), // 2
         // // rampUsers(10).during(5), // 3
@@ -97,10 +98,9 @@ public class SocketIOSimulation extends Simulation {
         // // rampUsersPerSec(10).to(100).during(10), // 6
         // // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
         // // stressPeakUsers(1000).during(20) // 8
-        // )
-        // //
-        // ,
-        sceneNoChecks.injectOpen(atOnceUsers(3))
+
+        ), sceneNoChecks.injectOpen(
+            atOnceUsers(3))
 
     ).protocols(httpProtocol);
   }

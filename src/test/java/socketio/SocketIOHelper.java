@@ -49,7 +49,7 @@ public class SocketIOHelper {
           regex("(.*)").saveAs("whole_message"));
 
   /**
-   * Checks for a mesage: "40{"sid":"JnYOfDWvpdm1zrCEAAAB"}"
+   * Checks for a message: "40{"sid":"JnYOfDWvpdm1zrCEAAAB"}"
    * <p>
    * or: "40/admin,{"sid":"-DhxQ_lWflSzYiiJAAAP"}" where admin is a namespace
    * <p>
@@ -74,7 +74,7 @@ public class SocketIOHelper {
    * expects a message with the server session id.
    */
   public static ChainBuilder connectΤοSocketIo(String nameSpace) {
-    return exec(ws("connect to Socket.IO")
+    return exec(ws("connect to Socket.IO websocket")
         .connect("/socket.io/?EIO=4&transport=websocket")
         .await(30)
         .on(checkWSConnectionMessageSID)
@@ -108,72 +108,41 @@ public class SocketIOHelper {
   }
 
   /**
-   * Disconnects from the default namespace: "/"
-   */
-  public static ChainBuilder disconnectFromSocketIo = disconnectFromSocketIo("");
-
-  static ChainBuilder sendMessage(String eventName, String message, String nameSpace) {
-    return exec(ws("send Socket.IO message")
-        .sendText(session -> TextFrame.eventFrame(
-            (StringBody(eventName)).apply(session),
-            (StringBody(message)).apply(session),
-            (StringBody(nameSpace)).apply(session))));
-  }
-
-  static ChainBuilder sendMessage(String eventName, String message) {
-    return sendMessage(eventName, message, "");
-  }
-
-  /**
-   * Sends a message to the Socket.IO server and expects a message with the
-   * responseEventName as an event name and saves the message in the session with
-   * the toSessionKey.
+   * Creates a WsSendTextActionBuilder with the eventFrame for the Socket.IO
+   * server. The parameters can be Gatling EL expressions.
+   * <p>
+   * The Ws ws parameter is needed since we cannot extend the final class Ws.
+   * <p>
+   * It is used instead of the sendText method of the Ws class.
+   * <p>
+   * The difference in use is the following:
    * 
+   * <pre>
+  ws("Say hi").sendText("42[\"eventName\",\"Hi\"]")
+  
+  sendTextSocketIO(ws("Say hi"), "eventName", "Hi")
+   * </pre>
+   * 
+   * @param ws
    * @param eventName
    * @param message
-   * @param responseEventName
-   * @param toSessionKey
    * @param nameSpace
    * @return
    */
-  static ChainBuilder sendMessageWithCheck(
-      String eventName,
-      String message,
-      String responseEventName,
-      String toSessionKey,
-      String nameSpace) {
-    return exec(ws("send Socket.IO message")
-        /*
-         * 4 => the Engine.IO message type
-         * 2 => the Socket.IO EVENT type
-         */
-        .sendText(TextFrame.eventFrame(eventName, message, nameSpace))
-        .await(30)
-        .on(checkEventMessage(responseEventName, toSessionKey)));
+  public static WsSendTextActionBuilder sendTextSocketIO(Ws ws, String eventName, String message, String nameSpace) {
+    return ws.sendText(session -> TextFrame.eventFrame(
+        (StringBody(eventName)).apply(session),
+        (StringBody(message)).apply(session),
+        (StringBody(nameSpace)).apply(session)));
+  }
+
+  public static WsSendTextActionBuilder sendTextSocketIO(Ws ws, String eventName, String message) {
+    return sendTextSocketIO(ws, eventName, message, "");
   }
 
   /**
-   * Sends a message to the default namespace of Socket.IO server and expects a
-   * message with the responseEventName as an event name and saves the message in
-   * the session with the toSessionKey.
-   * 
-   * @param eventName
-   * @param message
-   * @param responseEventName
-   * @param toSessionKey
-   * @return
+   * Disconnects from the default namespace: "/"
    */
-  static ChainBuilder sendMessageWithCheck(
-      String eventName,
-      String message,
-      String responseEventName,
-      String toSessionKey) {
-    return sendMessageWithCheck(
-        eventName,
-        message,
-        responseEventName,
-        toSessionKey,
-        "");
-  }
+  public static ChainBuilder disconnectFromSocketIo = disconnectFromSocketIo("");
 
 }

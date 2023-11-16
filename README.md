@@ -37,14 +37,28 @@ or provide the simulation class (if there are more than one simulation classes)
 ./mvnw gatling:recorder
 ```
 
-> **IMPORTANT:** 
+> **IMPORTANT:**
 >
->The recorder does not capture websocket events. You have to find another way to record WS/Socket.IO communication.
+> The recorder does not capture websocket events. You have to find another way to record WS/Socket.IO communication.
 
 ## Configuration file
 
 In file: `src/test/resources/gatling.conf`
 you can uncomment the lines for which you wish to have DEBUG output.
+
+## Important findings - How to?
+
+### Get the string of the evaluation of an EL expression in order to use it in some other function
+
+Within a function that accepts a session function use `(StringBody(elExpression)).apply(session)`
+
+For example:
+
+```java
+sendText(session ->
+  "id: " + (StringBody("#{randomSecureUuid()}")).apply(session)
+  )
+```
 
 ## Gatling Maven project
 
