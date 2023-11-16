@@ -79,7 +79,7 @@ public class SocketIOHelper {
         .await(30)
         .on(checkWSConnectionMessageSID)
         .onConnected(exec(ws("Connect to Socket.IO")
-            .sendText(connectFrame(nameSpace))
+            .sendText(TextFrame.connectFrame(nameSpace))
             .await(30)
             .on(checkSocketIOConnectionMessageSID))))
         /*
@@ -103,7 +103,7 @@ public class SocketIOHelper {
    */
   public static ChainBuilder disconnectFromSocketIo(String nameSpace) {
     return exec(ws("Disconnect from Socket.IO")
-        .sendText(disconnectFrame(nameSpace)))
+        .sendText(TextFrame.disconnectFrame(nameSpace)))
         .exec(ws("Close WS").close());
   }
 
@@ -114,7 +114,7 @@ public class SocketIOHelper {
 
   static ChainBuilder sendMessage(String eventName, String message, String nameSpace) {
     return exec(ws("send Socket.IO message")
-        .sendText(eventFrame(eventName, message, nameSpace)));
+        .sendText(TextFrame.eventFrame(eventName, message, nameSpace)));
   }
 
   static ChainBuilder sendMessage(String eventName, String message) {
@@ -144,7 +144,7 @@ public class SocketIOHelper {
          * 4 => the Engine.IO message type
          * 2 => the Socket.IO EVENT type
          */
-        .sendText(eventFrame(eventName, message, nameSpace))
+        .sendText(TextFrame.eventFrame(eventName, message, nameSpace))
         .await(30)
         .on(checkEventMessage(responseEventName, toSessionKey)));
   }
@@ -173,54 +173,4 @@ public class SocketIOHelper {
         "");
   }
 
-  /*
-   * PRIVATE METHODS
-   */
-
-  /*
-   * 4 => the Engine.IO message type
-   * 0 => the Socket.IO CONNECT type
-   * 1 => the Socket.IO DISCONNECT type
-   * 2 => the Socket.IO EVENT type
-   */
-  private static final String CONNECT_FRAME = "40";
-  private static final String DISCONNECT_FRAME = "41";
-  private static final String EVENT_FRAME = "42";
-
-  /**
-   * The default namespace is "/". "" can also be used to represent the default
-   * 
-   * @param nameSpace
-   * @return
-   */
-  private static boolean notDefaultNamespace(String nameSpace) {
-    return !nameSpace.equals("/") && !nameSpace.equals("");
-  }
-
-  private static String textFrame(String text, String nameSpace) {
-    String frame = text;
-
-    if (notDefaultNamespace(nameSpace)) {
-      frame += "/" + nameSpace;
-
-      if (text.equals(EVENT_FRAME)) {
-        frame += ",";
-      }
-    }
-
-    return frame;
-  }
-
-  private static String eventFrame(String eventName, String message, String nameSpace) {
-    return textFrame(EVENT_FRAME, nameSpace)
-        + "[\"" + eventName + "\",\"" + message + "\"]";
-  }
-
-  private static String connectFrame(String nameSpace) {
-    return textFrame(CONNECT_FRAME, nameSpace);
-  }
-
-  private static String disconnectFrame(String nameSpace) {
-    return textFrame(DISCONNECT_FRAME, nameSpace);
-  }
 }

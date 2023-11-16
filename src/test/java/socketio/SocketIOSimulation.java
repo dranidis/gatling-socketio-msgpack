@@ -4,9 +4,6 @@ import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 import static socketio.SocketIOHelper.*;
 
-import java.util.List;
-import java.util.Map;
-
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
 
@@ -40,7 +37,7 @@ public class SocketIOSimulation extends Simulation {
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
       // connect to the default namespace
       .exec(connectΤοSocketIo)
-      .feed(jsonFile("data.json").circular())
+      .feed(jsonFile("feed_data.json").circular())
       .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // repeat some times
       .repeat(2, "counter").on(
