@@ -13,10 +13,10 @@ io.on("connection", (socket) => {
   console.log("a user connected to the socket.io server: " + socket.id);
 
   socket.on("message", (msg) => {
+
     console.log("message: " + msg);
     io.emit("broadcast", "they say: " + msg);
   });
-
   socket.on("disconnect", () => {
     console.log("user disconnected: " + socket.id);
   });
@@ -32,11 +32,16 @@ namespace.on("connection", (socket) => {
     namespace.emit("broadcast", "admin they say: " + msg);
   });
 
+  socket.on("requet", (msg) => {
+    console.log("request message: " + msg);
+    socket.emit("response", "on message" + msg);
+  });
+
   socket.on("disconnect", () => {
     console.log("someone disconnected from the admin namespace: " + socket.id);
   });
-});
 
+});
 io.listen(3333);
 
 console.log("socket.io server listening on port 3333");

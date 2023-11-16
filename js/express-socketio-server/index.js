@@ -41,6 +41,13 @@ io.on("connection", (socket) => {
     io.emit("broadcast", "they say: " + msg);
   });
 
+
+  socket.on("request", (msg) => {
+    console.log("request message: " + msg);
+    socket.emit("response", "on message" + msg);
+  });
+
+
   socket.on("disconnect", () => {
     console.log("user disconnected: " + socket.id);
   });
@@ -54,6 +61,11 @@ namespace.on("connection", (socket) => {
   socket.on("message", (msg) => {
     console.log("message: " + msg);
     namespace.emit("broadcast", "admin they say: " + msg);
+  });
+
+  socket.on("request", (msg) => {
+    console.log("request message: " + msg);
+    socket.emit("response", "on message" + msg);
   });
 
   socket.on("disconnect", () => {

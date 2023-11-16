@@ -25,7 +25,7 @@ Alternatively, you may run the server found in `js/express-socketio-server` that
 ./mvnw gatling:test
 ```
 
-or provide the simulation class (if there are other simulation classes)
+or provide the simulation class (if there are more than one simulation classes)
 
 ```
 ./mvnw gatling:test  -Dgatling.simulationClass=socketio.SocketIOSimulation
@@ -37,7 +37,9 @@ or provide the simulation class (if there are other simulation classes)
 ./mvnw gatling:recorder
 ```
 
-The recorder does not capture websocket events.
+> **IMPORTANT:** 
+>
+>The recorder does not capture websocket events. You have to find another way to record WS/Socket.IO communication.
 
 ## Configuration file
 

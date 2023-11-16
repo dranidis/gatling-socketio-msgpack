@@ -4,6 +4,9 @@ import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 import static socketio.SocketIOHelper.*;
 
+import java.util.List;
+import java.util.Map;
+
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
 
@@ -21,7 +24,7 @@ public class SocketIOSimulation extends Simulation {
       .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // repeat some times
       .repeat(10, "counter").on(
-          // send a message to the default namespace and 
+          // send a message to the default namespace and
           // expect a server message at the event broadcast
           // save the message at the session key aResponse
           exec(sendMessageWithCheck(
@@ -29,25 +32,26 @@ public class SocketIOSimulation extends Simulation {
               "Hi #{counter}",
               "broadcast",
               "aResponse"))
-                  .exec(debugSessionValues("aResponse", "whole_message"))
-                  .pause(1))
-      //disconnect from the default namespace
+              .exec(debugSessionValues("aResponse", "whole_message"))
+              .pause(1))
+      // disconnect from the default namespace
       .exec(disconnectFromSocketIo);
 
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
       // connect to the default namespace
       .exec(connectΤοSocketIo)
+      .feed(jsonFile("data.json").circular())
       .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
       // repeat some times
-      .repeat(10, "counter").on(
-          // send a message to the default namespace and 
+      .repeat(2, "counter").on(
+          // send a message to the default namespace and
           // expect a server message at the event broadcast
           // save the message at the session key aResponse
           exec(sendMessage(
               "message",
-              "Hi I am not expecting a response #{counter}"))
-                  .pause(1))
-      //disconnect from the default namespace
+              "I am #{sid} counter: #{counter} time: #{time} data: #{data}"))
+              .pause(1))
+      // disconnect from the default namespace
       .exec(disconnectFromSocketIo);
 
   ScenarioBuilder adminScene = scenario("WebSocket admin")
@@ -57,7 +61,7 @@ public class SocketIOSimulation extends Simulation {
       // do if the session contains the key server_sid
       .doIf(session -> session.contains("server_sid"))
       .then(
-          // send a message to the admin namespace and 
+          // send a message to the admin namespace and
           // expect a server message at the event broadcast
           // save the message at the session key adminResponse
           exec(sendMessageWithCheck(
@@ -66,40 +70,40 @@ public class SocketIOSimulation extends Simulation {
               "broadcast",
               "adminResponse",
               "admin"))
-                  .exec(debugSessionValues("adminResponse", "whole_message"))
-                  //disconnect from the admin namespace
-                  .exec(disconnectFromSocketIo("admin")));
+              .exec(debugSessionValues("adminResponse", "whole_message"))
+              // disconnect from the admin namespace
+              .exec(disconnectFromSocketIo("admin")));
 
   {
     setDebug(true);
 
     setUp(
-        adminScene.injectOpen(atOnceUsers(1)
-        // nothingFor(4), // 1
-        // atOnceUsers(10), // 2
-        // rampUsers(10).during(5), // 3
-        // constantUsersPerSec(20).during(15), // 4
-        // constantUsersPerSec(20).during(15).randomized(), // 5
-        // rampUsersPerSec(10).to(100).during(10), // 6
-        // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
-        // stressPeakUsers(1000).during(20) // 8  
+        // adminScene.injectOpen(atOnceUsers(1)
+        // // nothingFor(4), // 1
+        // // atOnceUsers(10), // 2
+        // // rampUsers(10).during(5), // 3
+        // // constantUsersPerSec(20).during(15), // 4
+        // // constantUsersPerSec(20).during(15).randomized(), // 5
+        // // rampUsersPerSec(10).to(100).during(10), // 6
+        // // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
+        // // stressPeakUsers(1000).during(20) // 8
 
-        )
-        //
-        ,
-        scene.injectOpen(atOnceUsers(1)
-        // nothingFor(4), // 1
-        // atOnceUsers(10), // 2
-        // rampUsers(10).during(5), // 3
-        // constantUsersPerSec(20).during(15), // 4
-        // constantUsersPerSec(20).during(15).randomized(), // 5
-        // rampUsersPerSec(10).to(100).during(10), // 6
-        // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
-        // stressPeakUsers(1000).during(20) // 8  
-        )
-        //
-        ,
-        sceneNoChecks.injectOpen(atOnceUsers(1))
+        // )
+        // //
+        // ,
+        // scene.injectOpen(atOnceUsers(1)
+        // // nothingFor(4), // 1
+        // // atOnceUsers(10), // 2
+        // // rampUsers(10).during(5), // 3
+        // // constantUsersPerSec(20).during(15), // 4
+        // // constantUsersPerSec(20).during(15).randomized(), // 5
+        // // rampUsersPerSec(10).to(100).during(10), // 6
+        // // rampUsersPerSec(10).to(200).during(10).randomized(), // 7
+        // // stressPeakUsers(1000).during(20) // 8
+        // )
+        // //
+        // ,
+        sceneNoChecks.injectOpen(atOnceUsers(3))
 
     ).protocols(httpProtocol);
   }

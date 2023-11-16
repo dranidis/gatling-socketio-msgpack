@@ -82,12 +82,12 @@ public class SocketIOHelper {
             .sendText(connectFrame(nameSpace))
             .await(30)
             .on(checkSocketIOConnectionMessageSID))))
-                /*
-                 * a pause was required to avoid 
-                 * subsequent regex mismatch
-                 * seems to work now
-                 */
-                .pause(1);
+        /*
+         * a pause was required to avoid
+         * subsequent regex mismatch
+         * seems to work now
+         */
+        .pause(1);
   }
 
   /**
@@ -104,7 +104,7 @@ public class SocketIOHelper {
   public static ChainBuilder disconnectFromSocketIo(String nameSpace) {
     return exec(ws("Disconnect from Socket.IO")
         .sendText(disconnectFrame(nameSpace)))
-            .exec(ws("Close WS").close());
+        .exec(ws("Close WS").close());
   }
 
   /**
@@ -178,11 +178,11 @@ public class SocketIOHelper {
    */
 
   /*
-  * 4 => the Engine.IO message type
-  * 0 => the Socket.IO CONNECT type
-  * 1 => the Socket.IO DISCONNECT type
-  * 2 => the Socket.IO EVENT type
-  */
+   * 4 => the Engine.IO message type
+   * 0 => the Socket.IO CONNECT type
+   * 1 => the Socket.IO DISCONNECT type
+   * 2 => the Socket.IO EVENT type
+   */
   private static final String CONNECT_FRAME = "40";
   private static final String DISCONNECT_FRAME = "41";
   private static final String EVENT_FRAME = "42";
