@@ -82,12 +82,12 @@ public class SocketIOHelper {
             .sendText(TextFrame.connectFrame(nameSpace))
             .await(30)
             .on(checkSocketIOConnectionMessageSID))))
-        /*
-         * a pause was required to avoid
-         * subsequent regex mismatch
-         * seems to work now
-         */
-        .pause(1);
+                /*
+                 * a pause was required to avoid
+                 * subsequent regex mismatch
+                 * seems to work now
+                 */
+                .pause(1);
   }
 
   /**
@@ -104,7 +104,7 @@ public class SocketIOHelper {
   public static ChainBuilder disconnectFromSocketIo(String nameSpace) {
     return exec(ws("Disconnect from Socket.IO")
         .sendText(TextFrame.disconnectFrame(nameSpace)))
-        .exec(ws("Close WS").close());
+            .exec(ws("Close WS").close());
   }
 
   /**
@@ -114,7 +114,10 @@ public class SocketIOHelper {
 
   static ChainBuilder sendMessage(String eventName, String message, String nameSpace) {
     return exec(ws("send Socket.IO message")
-        .sendText(TextFrame.eventFrame(eventName, message, nameSpace)));
+        .sendText(session -> TextFrame.eventFrame(
+            (StringBody(eventName)).apply(session),
+            (StringBody(message)).apply(session),
+            (StringBody(nameSpace)).apply(session))));
   }
 
   static ChainBuilder sendMessage(String eventName, String message) {

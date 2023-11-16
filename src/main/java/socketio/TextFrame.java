@@ -26,11 +26,11 @@ public class TextFrame {
     return !nameSpace.equals("/") && !nameSpace.equals("");
   }
 
-  private static String textFrame(String text, String nameSpace) {
+  protected static String textFrame(String text, String nameSpace) {
     String frame = text;
 
     if (notDefaultNamespace(nameSpace)) {
-      frame += "/" + nameSpace;
+      frame += (nameSpace.startsWith("/") ? "" : "/") + nameSpace;
 
       if (text.equals(EVENT_FRAME)) {
         frame += ",";
@@ -51,6 +51,14 @@ public class TextFrame {
 
   protected static String disconnectFrame(String nameSpace) {
     return textFrame(DISCONNECT_FRAME, nameSpace);
+  }
+
+  public static boolean isEL(String expression) {
+    return expression.startsWith("#{") && expression.endsWith("}");
+  }
+
+  public static String getStringFromEL(String expression) {
+    return expression.substring(2, expression.length() - 1);
   }
 
 }

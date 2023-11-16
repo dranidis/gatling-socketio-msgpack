@@ -1,14 +1,19 @@
 [
-    {
-        "sim": 1,
-        "messages": [
-            {
-                "time": 0.07004284858703613,
-                "data": [
-                    "room:join",
-                    "meta"
-                ]
-            }
-        ]
-    }
+  {
+    "sim": 1,
+    "messages": [
+      {
+        "time": 0.07004284858703613,
+        "event": "room:join",
+        "msg": "meta",
+        "nsp": "/events/live/en"
+      },
+      {
+        "time": 1,
+        "event": "room:leave",
+        "msg": "meta",
+        "nsp": "/events/live/en"
+      }
+    ]
+  }
 ]

@@ -12,8 +12,12 @@ const io = new Server({
 io.on("connection", (socket) => {
   console.log("a user connected to the socket.io server: " + socket.id);
 
-  socket.on("message", (msg) => {
+  socket.on("room:join", (event, data) => {
+    console.log(event);
+    console.log(data);
+  });
 
+  socket.on("message", (msg) => {
     console.log("message: " + msg);
     io.emit("broadcast", "they say: " + msg);
   });
@@ -40,8 +44,25 @@ namespace.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("someone disconnected from the admin namespace: " + socket.id);
   });
-
 });
+
+const live = io.of("/events/live/en");
+live.on("connection", (socket) => {
+  console.log("someone connected to the live namespace: " + socket.id);
+
+  socket.on("room:join", (msg) => {
+    console.log("room:join: " + msg);
+  });
+
+  socket.on("room:leave", (msg) => {
+    console.log("room:leave: " + msg);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("someone disconnected from the live namespace: " + socket.id);
+  });
+});
+
 io.listen(3333);
 
 console.log("socket.io server listening on port 3333");
