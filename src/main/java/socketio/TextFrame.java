@@ -3,9 +3,13 @@ package socketio;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TextFrame {
+public class TextFrame implements Packet<String> {
 
   private TextFrame() {
+  }
+
+  public static TextFrame getInstance() {
+    return new TextFrame();
   }
 
   /*
@@ -46,7 +50,8 @@ public class TextFrame {
     return frame;
   }
 
-  protected static String eventFrame(String nameSpace, String... arg) {
+  @Override
+  public String eventFrame(String nameSpace, String... arg) {
     return textFrame(EVENT_FRAME, nameSpace) +
         Arrays
             // json objects should not get quoted
@@ -54,11 +59,13 @@ public class TextFrame {
             .collect(Collectors.joining(",", "[", "]"));
   }
 
-  protected static String connectFrame(String nameSpace) {
+  @Override
+  public String connectFrame(String nameSpace) {
     return textFrame(CONNECT_FRAME, nameSpace);
   }
 
-  protected static String disconnectFrame(String nameSpace) {
+  @Override
+  public String disconnectFrame(String nameSpace) {
     return textFrame(DISCONNECT_FRAME, nameSpace);
   }
 

@@ -1,0 +1,17 @@
+{
+  "name": "msgpack-express-socketio-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "D Dranidis",
+  "license": "ISC",
+  "dependencies": {
+    "@skgdev/socket.io-msgpack-javascript": "github:skgdev/socket.io-msgpack-javascript",
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
+  }
+}

@@ -18,6 +18,8 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
  */
 public class SocketIO {
 
+  private Packet<String> packet;
+
   private Ws websocket;
   private String nameSpace;
 
@@ -28,6 +30,7 @@ public class SocketIO {
   private SocketIO(Ws ws, String nameSpace) {
     this.websocket = ws;
     this.nameSpace = nameSpace;
+    this.packet = TextFrame.getInstance();
   }
 
   /**
@@ -57,11 +60,11 @@ public class SocketIO {
   }
 
   private WsSendTextActionBuilder connectToNameSpace() {
-    return websocket.sendText(TextFrame.connectFrame(this.nameSpace));
+    return websocket.sendText(packet.connectFrame(this.nameSpace));
   }
 
   public WsSendTextActionBuilder disconnect() {
-    return websocket.sendText(TextFrame.disconnectFrame(this.nameSpace));
+    return websocket.sendText(packet.disconnectFrame(this.nameSpace));
   }
 
   public ActionBuilder close() {
@@ -82,7 +85,7 @@ public class SocketIO {
           .map(s -> evaluateEL(session, s))
           .toArray(String[]::new);
 
-      return TextFrame.eventFrame(
+      return packet.eventFrame(
           (StringBody(this.nameSpace)).apply(session),
           frameArgs);
     });
@@ -111,7 +114,7 @@ public class SocketIO {
         frameArgs[i] = element;
       }
 
-      return TextFrame.eventFrame(
+      return packet.eventFrame(
           (StringBody(this.nameSpace)).apply(session),
           frameArgs);
     });

@@ -80,7 +80,7 @@ public class SocketIOHelper {
         .await(30)
         .on(checkWSConnectionMessageSID)
         .onConnected(exec(ws("Connect to Socket.IO")
-            .sendText(TextFrame.connectFrame(nameSpace))
+            .sendText(TextFrame.getInstance().connectFrame(nameSpace))
             .await(30)
             .on(checkSocketIOConnectionMessageSID))))
                 /*
@@ -104,7 +104,7 @@ public class SocketIOHelper {
    */
   public static ChainBuilder disconnectFromSocketIo(String nameSpace) {
     return exec(ws("Disconnect from Socket.IO")
-        .sendText(TextFrame.disconnectFrame(nameSpace)))
+        .sendText(TextFrame.getInstance().disconnectFrame(nameSpace)))
             .exec(ws("Close WS").close());
   }
 
