@@ -1,6 +1,12 @@
 package socketio;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class TextFrame {
+
+  private TextFrame() {
+  }
 
   /*
    * PRIVATE METHODS
@@ -26,7 +32,7 @@ public class TextFrame {
     return !nameSpace.equals("/") && !nameSpace.equals("");
   }
 
-  protected static String textFrame(String text, String nameSpace) {
+  private static String textFrame(String text, String nameSpace) {
     String frame = text;
 
     if (notDefaultNamespace(nameSpace)) {
@@ -40,9 +46,12 @@ public class TextFrame {
     return frame;
   }
 
-  protected static String eventFrame(String eventName, String message, String nameSpace) {
-    return textFrame(EVENT_FRAME, nameSpace)
-        + "[\"" + eventName + "\",\"" + message + "\"]";
+  protected static String eventFrame(String nameSpace, String... arg) {
+    return textFrame(EVENT_FRAME, nameSpace) +
+        Arrays
+            // json objects should not get quoted
+            .stream(arg).map(s -> s.startsWith("{") ? s : "\"" + s + "\"")
+            .collect(Collectors.joining(",", "[", "]"));
   }
 
   protected static String connectFrame(String nameSpace) {
@@ -51,14 +60,6 @@ public class TextFrame {
 
   protected static String disconnectFrame(String nameSpace) {
     return textFrame(DISCONNECT_FRAME, nameSpace);
-  }
-
-  public static boolean isEL(String expression) {
-    return expression.startsWith("#{") && expression.endsWith("}");
-  }
-
-  public static String getStringFromEL(String expression) {
-    return expression.substring(2, expression.length() - 1);
   }
 
 }

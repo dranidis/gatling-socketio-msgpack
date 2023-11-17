@@ -50,8 +50,8 @@ const live = io.of("/events/live/en");
 live.on("connection", (socket) => {
   console.log("someone connected to the live namespace: " + socket.id);
 
-  socket.on("room:join", (msg) => {
-    console.log("room:join: " + msg);
+  socket.on("room:join", (msg1, msg2) => {
+    console.log("room:join: " + msg1 + " " + JSON.stringify(msg2));
   });
 
   socket.on("room:leave", (msg) => {

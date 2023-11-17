@@ -57,14 +57,15 @@ public class SocketIOHelper {
    */
   public static WsFrameCheck checkSocketIOConnectionMessageSID = ws
       .checkTextMessage("check Socket.IO connection reply: save sid")
-      .check(regex("^40.*\\{\"sid\":\"([^\"]+)").saveAs("server_sid"),
+      .check(
+          regex("^40.*\\{\"sid\":\"([^\"]+)").saveAs("server_sid"),
           regex("^40(.*),*\\{").saveAs("namespace"),
           regex("(.*)").saveAs("whole_message"));
 
   static WsFrameCheck checkEventMessage(String eventName, String toSessionKey) {
     return ws.checkTextMessage("check server message after request")
-        .check(regex(".*" + eventName + "...([^\"]*)")
-            .saveAs(toSessionKey),
+        .check(
+            regex(".*" + eventName + "...([^\"]*)").saveAs(toSessionKey),
             regex("(.*)").saveAs("whole_message"));
   }
 
@@ -105,39 +106,6 @@ public class SocketIOHelper {
     return exec(ws("Disconnect from Socket.IO")
         .sendText(TextFrame.disconnectFrame(nameSpace)))
             .exec(ws("Close WS").close());
-  }
-
-  /**
-   * Creates a WsSendTextActionBuilder with the eventFrame for the Socket.IO
-   * server. The parameters can be Gatling EL expressions.
-   * <p>
-   * The Ws ws parameter is needed since we cannot extend the final class Ws.
-   * <p>
-   * It is used instead of the sendText method of the Ws class.
-   * <p>
-   * The difference in use is the following:
-   * 
-   * <pre>
-  ws("Say hi").sendText("42[\"eventName\",\"Hi\"]")
-  
-  sendTextSocketIO(ws("Say hi"), "eventName", "Hi")
-   * </pre>
-   * 
-   * @param ws
-   * @param eventName
-   * @param message
-   * @param nameSpace
-   * @return
-   */
-  public static WsSendTextActionBuilder sendTextSocketIO(Ws ws, String eventName, String message, String nameSpace) {
-    return ws.sendText(session -> TextFrame.eventFrame(
-        (StringBody(eventName)).apply(session),
-        (StringBody(message)).apply(session),
-        (StringBody(nameSpace)).apply(session)));
-  }
-
-  public static WsSendTextActionBuilder sendTextSocketIO(Ws ws, String eventName, String message) {
-    return sendTextSocketIO(ws, eventName, message, "");
   }
 
   /**
