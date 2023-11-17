@@ -1,6 +1,4 @@
 {
   "java.configuration.updateBuildConfiguration": "interactive",
-  "cSpell.words": [
-    "socketio"
-  ]
+  "cSpell.words": ["javaapi", "socketio"]
 }

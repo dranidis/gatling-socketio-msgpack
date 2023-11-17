@@ -2,7 +2,6 @@ package socketio;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
-import static socketio.SocketIOHelper.*;
 import static socketio.SocketIO.*;
 
 import io.gatling.javaapi.core.*;
@@ -20,8 +19,8 @@ public class SocketIOSimulationFeeder extends Simulation {
       // connect to the socket and the namespace
       //
       // should I read this from the data?
-      .exec(connectΤοSocketIo("/events/live/en"))
-      .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message"))
+      .exec(socketIO("connect to socket.io", "/events/live/en")
+          .connect())
 
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
@@ -31,15 +30,20 @@ public class SocketIOSimulationFeeder extends Simulation {
           pause("#{message.pause}")
               .exec(socketIO("send Socket.IO message", "#{message.nsp}")
                   .sendTextSocketIO("#{message.data}")))
+
       // disconnect from the default namespace
-      .exec(disconnectFromSocketIo);
+      .exec(socketIO("disconnect from socket.io", "/events/live/en")
+          .disconnect())
+      .exec(socketIO("close", "/events/live/en")
+          .close())
+  // .exec(disconnectFromSocketIo)
+  ;
 
   {
-    setDebug(true);
 
     setUp(
 
-        sceneNoChecks.injectOpen(atOnceUsers(2))
+        sceneNoChecks.injectOpen(atOnceUsers(1))
 
     ).protocols(httpProtocol);
   }

@@ -2,13 +2,16 @@ package socketio;
 
 import java.util.Arrays;
 
+import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
+import io.gatling.javaapi.http.WsConnectActionBuilder;
 import io.gatling.javaapi.http.WsSendTextActionBuilder;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.http.HttpDsl.ws;
 import static socketio.ELBuilder.*;
+import static io.gatling.javaapi.core.CoreDsl.exec;
 
 /**
  * DSL for manipulating Socket.IO messages
@@ -46,6 +49,23 @@ public class SocketIO {
    */
   public static SocketIO socketIO(String name, String nameSpace) {
     return new SocketIO(ws(name), nameSpace);
+  }
+
+  public WsConnectActionBuilder connect() {
+    return (websocket.connect("/socket.io/?EIO=4&transport=websocket")
+        .onConnected(exec(this.connectToNameSpace())));
+  }
+
+  private WsSendTextActionBuilder connectToNameSpace() {
+    return websocket.sendText(TextFrame.connectFrame(this.nameSpace));
+  }
+
+  public WsSendTextActionBuilder disconnect() {
+    return websocket.sendText(TextFrame.disconnectFrame(this.nameSpace));
+  }
+
+  public ActionBuilder close() {
+    return websocket.close();
   }
 
   /**
