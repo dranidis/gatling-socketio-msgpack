@@ -37,12 +37,13 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.msgpack/msgpack-core -->
+    <!-- https://mvnrepository.com/artifact/org.msgpack/jackson-dataformat-msgpack -->
     <dependency>
       <groupId>org.msgpack</groupId>
-      <artifactId>msgpack-core</artifactId>
+      <artifactId>jackson-dataformat-msgpack</artifactId>
       <version>0.9.6</version>
     </dependency>
+
 
   </dependencies>
 
