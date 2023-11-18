@@ -6,14 +6,11 @@ import static io.gatling.javaapi.http.HttpDsl.*;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.msgpack.jackson.dataformat.MessagePackFactory;
-import org.msgpack.jackson.dataformat.MessagePackMapper;
 
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
@@ -39,10 +36,17 @@ public class SimpleBinSocketIOSimulation extends Simulation {
   // Instantiate ObjectMapper for MessagePack
   ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
 
-  class Packet {
+  /**
+   * POJO for the packet object that is sent serialized to the server. Same packet
+   * is deserialized from the server.
+   */
+  static class Packet {
     public int type;
     public String nsp;
     public List<String> data;
+
+    public Packet() {
+    }
 
     public Packet(int type, String nsp, List<String> data) {
       this.type = type;
@@ -62,13 +66,10 @@ public class SimpleBinSocketIOSimulation extends Simulation {
   }
 
   CheckBuilder checkBroadcastEventSaveMessage = bodyBytes().transform(bytes -> {
-    // Deserialize the byte array to a Map
-    Map<String, Object> deserialized = null;
-    ObjectMapper objectMapper = new MessagePackMapper();
+    Packet packet = null;
 
     try {
-      deserialized = objectMapper.readValue(bytes, new TypeReference<Map<String, Object>>() {
-      });
+      packet = objectMapper.readValue(bytes, Packet.class);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -77,10 +78,8 @@ public class SimpleBinSocketIOSimulation extends Simulation {
      * first element in the data array is the event name and the second element is
      * the message
      */
-    @SuppressWarnings("unchecked")
-    List<String> dataList = (List<String>) deserialized.get("data");
-    String eventName = dataList.get(0);
-    String message = dataList.get(1);
+    String eventName = packet.data.get(0);
+    String message = packet.data.get(1);
 
     if (!eventName.equals("broadcast")) {
       throw new RuntimeException("Expected broadcast event, got " + eventName + " instead");
