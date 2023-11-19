@@ -1,5 +1,5 @@
 //
-// Starts a web server at port 3333
+// Starts a web server
 // and a websocket server at the same port.
 //
 // The websocket server is used to send and receive messages
