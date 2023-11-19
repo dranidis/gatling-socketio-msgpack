@@ -10,12 +10,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
+import socketio.SocketIODisconnectPacket;
 import socketio.SocketIOPacket;
 import socketio.SocketIOProtocol;
+import socketio.SocketIOType;
 
 public class MsgPackSocketIOProtocol implements SocketIOProtocol {
+
   private Ws websocket;
-  ObjectMapper objectMapper;
+  private ObjectMapper objectMapper;
 
   public MsgPackSocketIOProtocol(Ws websocket) {
     this.websocket = websocket;
@@ -38,13 +41,16 @@ public class MsgPackSocketIOProtocol implements SocketIOProtocol {
 
   private byte[] socketIOPacketToString(SocketIOPacket packet) {
     try {
-      return objectMapper.writeValueAsBytes(packet);
+      if (packet.type == SocketIOType.DISCONNECT.getValue()) {
+        return objectMapper.writeValueAsBytes(
+            new SocketIODisconnectPacket(packet.type, packet.nsp));
+      } else {
+        return objectMapper.writeValueAsBytes(packet);
+      }
+
     } catch (JsonProcessingException e) {
       e.printStackTrace();
-
-      // TODO: handle exception??
-
-      return new byte[0];
+      throw new IllegalArgumentException("Invalid JSON packet");
 
     }
   }

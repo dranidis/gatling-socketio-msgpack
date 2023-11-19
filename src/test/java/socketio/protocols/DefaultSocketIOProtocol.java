@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
 import socketio.SocketIOPacket;
 import socketio.SocketIOProtocol;
+import socketio.SocketIOType;
 import socketio.TextFrame;
 
 public class DefaultSocketIOProtocol implements SocketIOProtocol {
@@ -32,16 +33,16 @@ public class DefaultSocketIOProtocol implements SocketIOProtocol {
 
   private String socketIOPacketToString(SocketIOPacket packet) {
     String textFrame = "";
-    switch (packet.type) {
-    case 0:
+    switch (SocketIOType.fromValue(packet.type)) {
+    case CONNECT:
       textFrame = TextFrame.getInstance()
           .connectFrame(packet.nsp);
       break;
-    case 1:
+    case DISCONNECT:
       textFrame = TextFrame.getInstance()
           .disconnectFrame(packet.nsp);
       break;
-    case 2:
+    case EVENT:
       textFrame = TextFrame.getInstance()
           .eventFrame(packet.nsp, packet.data.toArray(new String[0]));
       break;

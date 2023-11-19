@@ -31,7 +31,9 @@ io.on("connection", (socket) => {
 // create a new namespace
 const nsp = io.of("/events/live/en");
 nsp.on("connection", (socket) => {
-  console.log("someone connected to the namespace: " + socket.id);
+  console.log(
+    "someone connected to the namespace: " + "/events/live/en" + socket.id
+  );
   socket.emit("hello", "world");
 
   socket.on("room:join", (msg1, msg2) => {
@@ -43,7 +45,9 @@ nsp.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected: " + socket.id);
+    console.log(
+      "user disconnected from namespase" + "/events/live/en" + socket.id
+    );
   });
 });
 
