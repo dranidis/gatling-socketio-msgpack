@@ -1,6 +1,8 @@
 package socketio;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
@@ -11,7 +13,6 @@ import io.gatling.javaapi.http.WsConnectActionBuilder;
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.http.HttpDsl.ws;
 import static socketio.ELBuilder.*;
-import static io.gatling.javaapi.core.CoreDsl.exec;
 
 /**
  * DSL for manipulating Socket.IO messages
@@ -24,14 +25,15 @@ public class SocketIO {
   private String nameSpace;
   private SocketIOProtocol socketIOProtocol;
 
-  private SocketIO(Ws ws) {
-    this(ws, "");
+  private SocketIO(Ws webSocket) {
+    this(webSocket, "");
   }
 
-  private SocketIO(Ws ws, String nameSpace) {
-    this.websocket = ws;
+  private SocketIO(Ws webSocket, String nameSpace) {
+    this.websocket = webSocket;
     this.nameSpace = nameSpace;
     this.packet = TextFrame.getInstance();
+
     this.socketIOProtocol = new DefaultSocketIOProtocol(this.websocket);
   }
 
@@ -57,16 +59,18 @@ public class SocketIO {
   }
 
   public WsConnectActionBuilder connect() {
-    return (websocket.connect("/socket.io/?EIO=4&transport=websocket")
-        .onConnected(exec(this.connectToNameSpace())));
+    return (websocket.connect("/socket.io/?EIO=4&transport=websocket"));
+    // .onConnected(exec(...)));
   }
 
-  private WsAwaitActionBuilder connectToNameSpace() {
-    return socketIOProtocol.send(new SocketIOPacket(0, "/", Arrays.asList()));
+  public WsAwaitActionBuilder connectToNameSpace(String nameSpace) {
+    return socketIOProtocol.send(
+        new SocketIOPacket(0, nameSpace, Arrays.asList()));
   }
 
-  public WsAwaitActionBuilder disconnectFromNameSpace() {
-    return websocket.sendText(packet.disconnectFrame(this.nameSpace));
+  public WsAwaitActionBuilder disconnectFromNameSpace(String nameSpace) {
+    return socketIOProtocol.send(
+        new SocketIOPacket(1, nameSpace, Arrays.asList()));
   }
 
   public ActionBuilder close() {
@@ -81,15 +85,15 @@ public class SocketIO {
    * @return
    */
   public WsAwaitActionBuilder sendTextSocketIO(String... arg) {
-    return websocket.sendText(session -> {
+    return socketIOProtocol.send(session -> {
 
-      String[] frameArgs = Arrays.stream(arg)
+      // create the SocketIOPacket
+
+      List<String> frameArgs = Arrays.stream(arg)
           .map(s -> evaluateEL(session, s))
-          .toArray(String[]::new);
+          .collect(Collectors.toList());
 
-      return packet.eventFrame(
-          (StringBody(this.nameSpace)).apply(session),
-          frameArgs);
+      return new SocketIOPacket(2, this.nameSpace, frameArgs);
     });
   }
 

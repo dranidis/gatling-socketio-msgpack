@@ -21,6 +21,8 @@ public class SocketIOSimulationFeeder extends Simulation {
       // should I read this from the data?
       .exec(socketIO("connect to socket.io", "/events/live/en")
           .connect())
+      .exec(socketIO("connect to socket.io", "/events/live/en")
+          .connectToNameSpace("/events/live/en"))
 
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
@@ -33,7 +35,7 @@ public class SocketIOSimulationFeeder extends Simulation {
 
       // disconnect from the default namespace
       .exec(socketIO("disconnect from socket.io", "/events/live/en")
-          .disconnectFromNameSpace())
+          .disconnectFromNameSpace("/events/live/en"))
       .exec(socketIO("close", "/events/live/en")
           .close())
   // .exec(disconnectFromSocketIo)
