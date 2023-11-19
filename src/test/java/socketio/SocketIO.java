@@ -1,5 +1,6 @@
 package socketio;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class SocketIO {
   public WsAwaitActionBuilder sendTextSocketIO(String... arg) {
     return socketIOProtocol.send(session -> {
 
-      // create the SocketIOPacket
+      // create and return the SocketIOPacket
 
       List<String> frameArgs = Arrays.stream(arg)
           .map(s -> evaluateEL(session, s))
@@ -105,10 +106,12 @@ public class SocketIO {
    * @return
    */
   public WsAwaitActionBuilder sendTextSocketIO(String elArray) {
-    return websocket.sendText(session -> {
+    return socketIOProtocol.send(session -> {
+
+      // create and return the SocketIOPacket
 
       int size = getSize(session, elArray);
-      String[] frameArgs = new String[size];
+      List<String> frameArgsList = new ArrayList<>();
 
       for (int i = 0; i < size; i++) {
         String element = atIndex(session, elArray, i);
@@ -117,12 +120,9 @@ public class SocketIO {
           element = mapToJSON(session, elArray, i);
         }
 
-        frameArgs[i] = element;
+        frameArgsList.add(element);
       }
-
-      return packet.eventFrame(
-          (StringBody(this.nameSpace)).apply(session),
-          frameArgs);
+      return new SocketIOPacket(2, (StringBody(this.nameSpace)).apply(session), frameArgsList);
     });
   }
 
