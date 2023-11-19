@@ -5,7 +5,7 @@ import java.util.List;
 // import com.fasterxml.jackson.annotation.JsonFilter;
 
 // @JsonFilter("filterData")
-class SocketIOPacket {
+public class SocketIOPacket {
   public int type;
   public String nsp;
   public List<String> data;

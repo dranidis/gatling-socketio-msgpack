@@ -10,6 +10,7 @@ import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
 import io.gatling.javaapi.http.WsConnectActionBuilder;
+import socketio.protocols.DefaultSocketIOProtocolFactory;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.http.HttpDsl.ws;

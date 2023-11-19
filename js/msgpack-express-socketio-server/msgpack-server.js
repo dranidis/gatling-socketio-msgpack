@@ -28,4 +28,23 @@ io.on("connection", (socket) => {
   });
 });
 
+// create a new namespace
+const nsp = io.of("/events/live/en");
+nsp.on("connection", (socket) => {
+  console.log("someone connected to the namespace: " + socket.id);
+  socket.emit("hello", "world");
+
+  socket.on("room:join", (msg1, msg2) => {
+    console.log("room:join: " + msg1, msg2);
+  });
+
+  socket.on("room:leave", (msg1, msg2) => {
+    console.log("room:leave: " + msg1, msg2);
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected: " + socket.id);
+  });
+});
+
 io.listen(5555);

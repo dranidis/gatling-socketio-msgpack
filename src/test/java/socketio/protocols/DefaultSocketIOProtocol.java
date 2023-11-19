@@ -1,10 +1,13 @@
-package socketio;
+package socketio.protocols;
 
 import java.util.function.Function;
 
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
+import socketio.SocketIOPacket;
+import socketio.SocketIOProtocol;
+import socketio.TextFrame;
 
 public class DefaultSocketIOProtocol implements SocketIOProtocol {
   private Ws websocket;
@@ -55,4 +58,5 @@ public class DefaultSocketIOProtocol implements SocketIOProtocol {
     }
     return textFrame;
   }
+
 }

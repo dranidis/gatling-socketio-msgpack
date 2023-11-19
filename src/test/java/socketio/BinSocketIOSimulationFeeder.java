@@ -6,18 +6,18 @@ import static socketio.SocketIO.*;
 
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
-import socketio.protocols.DefaultSocketIOProtocolFactory;
+import socketio.protocols.MsgpackSocketIOProtocolFactory;
 
-public class SocketIOSimulationFeeder extends Simulation {
+public class BinSocketIOSimulationFeeder extends Simulation {
 
   HttpProtocolBuilder httpProtocol = http
-      .wsBaseUrl("ws://localhost:3333")
+      .wsBaseUrl("ws://localhost:5555")
       .wsReconnect()
       .wsMaxReconnects(5)
       .wsAutoReplySocketIo4();
 
   {
-    SocketIO.setSocketIOProtocolFactory(new DefaultSocketIOProtocolFactory());
+    SocketIO.setSocketIOProtocolFactory(new MsgpackSocketIOProtocolFactory());
   }
 
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
