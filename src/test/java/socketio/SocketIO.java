@@ -5,8 +5,8 @@ import java.util.Arrays;
 import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
+import io.gatling.javaapi.http.WsAwaitActionBuilder;
 import io.gatling.javaapi.http.WsConnectActionBuilder;
-import io.gatling.javaapi.http.WsSendTextActionBuilder;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.http.HttpDsl.ws;
@@ -18,10 +18,11 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
  */
 public class SocketIO {
 
-  private Packet<String> packet;
+  private PacketFrame<String> packet;
 
   private Ws websocket;
   private String nameSpace;
+  private SocketIOProtocol socketIOProtocol;
 
   private SocketIO(Ws ws) {
     this(ws, "");
@@ -31,6 +32,7 @@ public class SocketIO {
     this.websocket = ws;
     this.nameSpace = nameSpace;
     this.packet = TextFrame.getInstance();
+    this.socketIOProtocol = new DefaultSocketIOProtocol(this.websocket);
   }
 
   /**
@@ -59,11 +61,11 @@ public class SocketIO {
         .onConnected(exec(this.connectToNameSpace())));
   }
 
-  private WsSendTextActionBuilder connectToNameSpace() {
-    return websocket.sendText(packet.connectFrame(this.nameSpace));
+  private WsAwaitActionBuilder connectToNameSpace() {
+    return socketIOProtocol.send(new SocketIOPacket(0, "/", Arrays.asList()));
   }
 
-  public WsSendTextActionBuilder disconnect() {
+  public WsAwaitActionBuilder disconnectFromNameSpace() {
     return websocket.sendText(packet.disconnectFrame(this.nameSpace));
   }
 
@@ -78,7 +80,7 @@ public class SocketIO {
    * @param arg
    * @return
    */
-  public WsSendTextActionBuilder sendTextSocketIO(String... arg) {
+  public WsAwaitActionBuilder sendTextSocketIO(String... arg) {
     return websocket.sendText(session -> {
 
       String[] frameArgs = Arrays.stream(arg)
@@ -98,7 +100,7 @@ public class SocketIO {
    * @param elArray
    * @return
    */
-  public WsSendTextActionBuilder sendTextSocketIO(String elArray) {
+  public WsAwaitActionBuilder sendTextSocketIO(String elArray) {
     return websocket.sendText(session -> {
 
       int size = getSize(session, elArray);

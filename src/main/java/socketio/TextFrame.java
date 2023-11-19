@@ -3,7 +3,7 @@ package socketio;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TextFrame implements Packet<String> {
+public class TextFrame implements PacketFrame<String> {
 
   private TextFrame() {
   }

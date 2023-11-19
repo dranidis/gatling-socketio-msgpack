@@ -33,7 +33,7 @@ public class SocketIOSimulationFeeder extends Simulation {
 
       // disconnect from the default namespace
       .exec(socketIO("disconnect from socket.io", "/events/live/en")
-          .disconnect())
+          .disconnectFromNameSpace())
       .exec(socketIO("close", "/events/live/en")
           .close())
   // .exec(disconnectFromSocketIo)

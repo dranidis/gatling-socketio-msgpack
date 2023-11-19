@@ -1,6 +1,6 @@
 package socketio;
 
-public interface Packet<T> {
+public interface PacketFrame<T> {
 
   T eventFrame(String namespace, String... arg);
 
