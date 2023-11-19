@@ -55,11 +55,28 @@ public class SimpleBinSocketIOSimulation extends Simulation {
     }
   }
 
+  /**
+   * A different POJO is needed for the disconnect packet because the server does
+   * not expect the data field and responds with an error if it is present.
+   */
+  static class DisconnectPacket {
+    public int type;
+    public String nsp;
+
+    public DisconnectPacket(String nsp) {
+      type = 1;
+      this.nsp = nsp;
+    }
+  }
+
   {
     try {
-      packConnectBytes = objectMapper.writeValueAsBytes(new Packet(0, "/", Arrays.asList()));
-      packSendBytes = objectMapper.writeValueAsBytes(new Packet(2, "/", Arrays.asList("message", "hi")));
-      packDisconnectBytes = objectMapper.writeValueAsBytes(new Packet(1, "/", Arrays.asList()));
+      packConnectBytes = objectMapper.writeValueAsBytes(
+          new Packet(0, "/", Arrays.asList()));
+      packSendBytes = objectMapper.writeValueAsBytes(
+          new Packet(2, "/", Arrays.asList("message", "hi")));
+      packDisconnectBytes = objectMapper.writeValueAsBytes(
+          new DisconnectPacket("/"));
     } catch (JsonProcessingException e) {
       e.printStackTrace();
     }
