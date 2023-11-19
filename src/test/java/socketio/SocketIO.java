@@ -61,7 +61,7 @@ public class SocketIO {
     return new SocketIO(ws(name), nameSpace);
   }
 
-  public WsConnectActionBuilder connect() {
+  public WsAwaitActionBuilder connect() {
     return (webSocket.connect("/socket.io/?EIO=4&transport=websocket"));
     // .onConnected(exec(...)));
   }
@@ -87,7 +87,7 @@ public class SocketIO {
    * @param arg
    * @return
    */
-  public WsAwaitActionBuilder sendTextSocketIO(String... arg) {
+  public WsAwaitActionBuilder send(String... arg) {
     return socketIOProtocol.send(session -> {
 
       // create and return the SocketIOPacket
@@ -107,7 +107,7 @@ public class SocketIO {
    * @param elArray
    * @return
    */
-  public WsAwaitActionBuilder sendTextSocketIO(String elArray) {
+  public WsAwaitActionBuilder send(String elArray) {
     return socketIOProtocol.send(session -> {
 
       // create and return the SocketIOPacket

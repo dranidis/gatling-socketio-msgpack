@@ -3,17 +3,11 @@
     "messages": [
       {
         "pause": 0,
-        "time": 0.07004284858703613,
-        "event": "room:join",
-        "msg": "meta",
         "nsp": "/events/live/en",
         "data": ["room:join", "meta"]
       },
       {
         "pause": 2,
-        "time": 1,
-        "event": "room:leave",
-        "msg": "meta",
         "nsp": "/events/live/en",
         "data": [
           "room:join",
@@ -32,17 +26,11 @@
     "messages": [
       {
         "pause": 1,
-        "time": 0.07004284858703613,
-        "event": "room:join",
-        "msg": "meta2",
         "nsp": "/events/live/en",
         "data": ["room:join", "meta"]
       },
       {
         "pause": 1,
-        "time": 1,
-        "event": "room:leave",
-        "msg": "meta2",
         "nsp": "/events/live/en",
         "data": [
           "room:join",

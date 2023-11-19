@@ -1,4 +1,4 @@
-package socketio;
+package socketio.sim;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
@@ -6,27 +6,29 @@ import static socketio.SocketIO.*;
 
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
-import socketio.protocols.DefaultSocketIOProtocolFactory;
+import socketio.SocketIO;
+import socketio.protocols.MsgpackSocketIOProtocolFactory;
 
-public class SocketIOSimulationFeeder extends Simulation {
+public class BinSocketIOSimulationFeeder extends Simulation {
 
   HttpProtocolBuilder httpProtocol = http
-      .wsBaseUrl("ws://localhost:3333")
+      .wsBaseUrl("ws://localhost:5555")
       .wsReconnect()
       .wsMaxReconnects(5)
       .wsAutoReplySocketIo4();
 
   {
-    SocketIO.setSocketIOProtocolFactory(new DefaultSocketIOProtocolFactory());
+    SocketIO.setSocketIOProtocolFactory(new MsgpackSocketIOProtocolFactory());
   }
 
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
       // connect to the socket and the namespace
       //
       // should I read this from the data?
-      .exec(socketIO("connect to socket.io")
-          .connect())
-      .exec(socketIO("connect to socket.io")
+      // does it connect to other namespaces?
+      //
+      .exec(socketIO("connect to socket.io").connect())
+      .exec(socketIO("connect to namespace /events/live/en")
           .connectToNameSpace("/events/live/en"))
 
       // read messages from the data file
@@ -35,22 +37,19 @@ public class SocketIOSimulationFeeder extends Simulation {
       .feed(jsonFile("data.json").circular())
       .foreach("#{messages}", "message").on(
           pause("#{message.pause}")
-              .exec(socketIO("send Socket.IO message", "#{message.nsp}")
-                  .sendTextSocketIO("#{message.data}")))
+              .exec(socketIO("send message", "#{message.nsp}")
+                  .send("#{message.data}")))
 
       // disconnect from the default namespace
-      .exec(socketIO("disconnect from socket.io", "/events/live/en")
+      .exec(socketIO("disconnect from namespace /events/live/en")
           .disconnectFromNameSpace("/events/live/en"))
-      .exec(socketIO("close", "/events/live/en")
-          .close())
-  // .exec(disconnectFromSocketIo)
-  ;
+      .exec(socketIO("close", "/events/live/en").close());
 
   {
 
     setUp(
 
-        sceneNoChecks.injectOpen(atOnceUsers(1))
+        sceneNoChecks.injectOpen(atOnceUsers(10))
 
     ).protocols(httpProtocol);
   }

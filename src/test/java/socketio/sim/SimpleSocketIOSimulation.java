@@ -1,4 +1,4 @@
-package socketio;
+package socketio.sim;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
@@ -37,6 +37,6 @@ public class SimpleSocketIOSimulation extends Simulation {
 
   {
     setUp(
-        scene.injectOpen(atOnceUsers(2))).protocols(httpProtocol);
+        scene.injectOpen(atOnceUsers(1))).protocols(httpProtocol);
   }
 }
