@@ -20,22 +20,23 @@ import static socketio.ELBuilder.*;
  */
 public class SocketIO {
 
-  private PacketFrame<String> packet;
-
-  private Ws websocket;
+  private Ws webSocket;
   private String nameSpace;
   private SocketIOProtocol socketIOProtocol;
+  private static SocketIOProtocolFactory socketIOProtocolFactory = new DefaultSocketIOProtocolFactory();
+
+  public static void setSocketIOProtocolFactory(SocketIOProtocolFactory socketIOProtocolFactory) {
+    SocketIO.socketIOProtocolFactory = socketIOProtocolFactory;
+  }
 
   private SocketIO(Ws webSocket) {
     this(webSocket, "");
   }
 
   private SocketIO(Ws webSocket, String nameSpace) {
-    this.websocket = webSocket;
+    this.webSocket = webSocket;
     this.nameSpace = nameSpace;
-    this.packet = TextFrame.getInstance();
-
-    this.socketIOProtocol = new DefaultSocketIOProtocol(this.websocket);
+    this.socketIOProtocol = socketIOProtocolFactory.createSocketIOProtocol(this.webSocket);
   }
 
   /**
@@ -45,7 +46,7 @@ public class SocketIO {
    * @return
    */
   public static SocketIO socketIO(String name) {
-    return SocketIO.socketIO(name, "");
+    return SocketIO.socketIO(name, "/");
   }
 
   /**
@@ -60,7 +61,7 @@ public class SocketIO {
   }
 
   public WsConnectActionBuilder connect() {
-    return (websocket.connect("/socket.io/?EIO=4&transport=websocket"));
+    return (webSocket.connect("/socket.io/?EIO=4&transport=websocket"));
     // .onConnected(exec(...)));
   }
 
@@ -75,7 +76,7 @@ public class SocketIO {
   }
 
   public ActionBuilder close() {
-    return websocket.close();
+    return webSocket.close();
   }
 
   /**

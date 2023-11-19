@@ -15,13 +15,17 @@ public class SocketIOSimulationFeeder extends Simulation {
       .wsMaxReconnects(5)
       .wsAutoReplySocketIo4();
 
+  {
+    SocketIO.setSocketIOProtocolFactory(new DefaultSocketIOProtocolFactory());
+  }
+
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
       // connect to the socket and the namespace
       //
       // should I read this from the data?
-      .exec(socketIO("connect to socket.io", "/events/live/en")
+      .exec(socketIO("connect to socket.io")
           .connect())
-      .exec(socketIO("connect to socket.io", "/events/live/en")
+      .exec(socketIO("connect to socket.io")
           .connectToNameSpace("/events/live/en"))
 
       // read messages from the data file
