@@ -8,7 +8,8 @@ public class DefaultSocketIOProtocolFactory implements SocketIOProtocolFactory {
 
   @Override
   public SocketIOProtocol createSocketIOProtocol(Ws webSocket) {
-    return new DefaultSocketIOProtocol(webSocket);
+    return new UnifiedSocketIOProtocol<String>(
+        webSocket, new DefaultSocketIOParser());
   }
 
 }

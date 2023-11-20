@@ -8,7 +8,8 @@ public class MsgpackSocketIOProtocolFactory implements SocketIOProtocolFactory {
 
   @Override
   public SocketIOProtocol createSocketIOProtocol(Ws webSocket) {
-    return new MsgPackSocketIOProtocol(webSocket);
+    return new UnifiedSocketIOProtocol<byte[]>(
+        webSocket, new MessagePackSocketIOParser());
   }
 
 }

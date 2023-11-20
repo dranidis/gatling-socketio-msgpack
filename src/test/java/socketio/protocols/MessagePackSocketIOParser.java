@@ -9,10 +9,10 @@ import socketio.SocketIODisconnectPacket;
 import socketio.SocketIOPacket;
 import socketio.SocketIOType;
 
-public class MessagePackParser implements Parser<byte[]> {
+public class MessagePackSocketIOParser implements SocketIOParser<byte[]> {
   private ObjectMapper objectMapper;
 
-  public MessagePackParser() {
+  public MessagePackSocketIOParser() {
     objectMapper = new ObjectMapper(new MessagePackFactory());
   }
 
@@ -31,5 +31,10 @@ public class MessagePackParser implements Parser<byte[]> {
       throw new IllegalArgumentException("Invalid JSON packet");
 
     }
+  }
+
+  @Override
+  public String packetType() {
+    return "binary";
   }
 }

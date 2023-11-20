@@ -2,6 +2,8 @@ package socketio.protocols;
 
 import socketio.SocketIOPacket;
 
-public interface Parser<T> {
+public interface SocketIOParser<T> {
   T encode(SocketIOPacket packet);
+
+  String packetType();
 }

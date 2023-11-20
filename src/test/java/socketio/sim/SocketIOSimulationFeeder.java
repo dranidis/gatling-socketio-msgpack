@@ -21,6 +21,8 @@ public class SocketIOSimulationFeeder extends Simulation {
     SocketIO.setSocketIOProtocolFactory(new DefaultSocketIOProtocolFactory());
   }
 
+  String namespace = "/events/live/en";
+
   ScenarioBuilder sceneNoChecks = scenario("WebSocket no checks")
       // connect to the socket and the namespace
       //
@@ -28,8 +30,8 @@ public class SocketIOSimulationFeeder extends Simulation {
       // does it connect to other namespaces?
       //
       .exec(socketIO("connect to socket.io").connect())
-      .exec(socketIO("connect to namespace /events/live/en")
-          .connectToNameSpace("/events/live/en"))
+      .exec(socketIO("connect to namespace")
+          .connectToNameSpace(namespace))
 
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
@@ -37,13 +39,13 @@ public class SocketIOSimulationFeeder extends Simulation {
       .feed(jsonFile("data.json").circular())
       .foreach("#{messages}", "message").on(
           pause("#{message.pause}")
-              .exec(socketIO("send message", "#{message.nsp}")
+              .exec(socketIO("send message", namespace)
                   .send("#{message.data}")))
 
       // disconnect from the default namespace
-      .exec(socketIO("disconnect from namespace /events/live/en")
-          .disconnectFromNameSpace("/events/live/en"))
-      .exec(socketIO("close", "/events/live/en").close());
+      .exec(socketIO("disconnect from namespace")
+          .disconnectFromNameSpace(namespace))
+      .exec(socketIO("close").close());
 
   {
 
