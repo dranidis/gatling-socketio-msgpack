@@ -62,55 +62,11 @@ public class SocketIOHelper {
           regex("^40(.*),*\\{").saveAs("namespace"),
           regex("(.*)").saveAs("whole_message"));
 
-  static WsFrameCheck checkEventMessage(String eventName, String toSessionKey) {
+  public static WsFrameCheck checkEventMessage(String eventName, String toSessionKey) {
     return ws.checkTextMessage("check server message after request")
         .check(
-            regex(".*" + eventName + "...([^\"]*)").saveAs(toSessionKey),
-            regex("(.*)").saveAs("whole_message"));
+            regex("(.*)").saveAs("whole_message"),
+            regex("42.*" + eventName + "...([^\"]*)").saveAs(toSessionKey));
   }
-
-  /**
-   * First connects to the web socket and expects a message with the session id.
-   * On successful connection, sends a CONNECT message to the Socket.IO and
-   * expects a message with the server session id.
-   */
-  public static ChainBuilder connectΤοSocketIo(String nameSpace) {
-    return exec(ws("connect to Socket.IO websocket")
-        .connect("/socket.io/?EIO=4&transport=websocket")
-        .await(30)
-        .on(checkWSConnectionMessageSID)
-        .onConnected(exec(ws("Connect to Socket.IO")
-            .sendText(TextFrame.getInstance().connectFrame(nameSpace))
-            .await(30)
-            .on(checkSocketIOConnectionMessageSID))))
-                /*
-                 * a pause was required to avoid
-                 * subsequent regex mismatch
-                 * seems to work now
-                 */
-                .pause(1);
-  }
-
-  /**
-   * Connects to the default namespace: "/"
-   */
-  public static ChainBuilder connectΤοSocketIo = connectΤοSocketIo("");
-
-  /**
-   * Disconnects from the Socket.IO namespace
-   * 
-   * @param nameSpace
-   * @return
-   */
-  public static ChainBuilder disconnectFromSocketIo(String nameSpace) {
-    return exec(ws("Disconnect from Socket.IO")
-        .sendText(TextFrame.getInstance().disconnectFrame(nameSpace)))
-            .exec(ws("Close WS").close());
-  }
-
-  /**
-   * Disconnects from the default namespace: "/"
-   */
-  public static ChainBuilder disconnectFromSocketIo = disconnectFromSocketIo("");
 
 }

@@ -1,4 +1,4 @@
-package socketio;
+package socketio.sim;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;

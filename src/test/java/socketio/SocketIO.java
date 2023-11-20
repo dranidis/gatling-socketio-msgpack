@@ -1,36 +1,43 @@
 package socketio;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
+import io.gatling.javaapi.http.WsAwaitActionBuilder;
 import io.gatling.javaapi.http.WsConnectActionBuilder;
-import io.gatling.javaapi.http.WsSendTextActionBuilder;
+import socketio.protocols.DefaultSocketIOProtocolFactory;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.http.HttpDsl.ws;
 import static socketio.ELBuilder.*;
-import static io.gatling.javaapi.core.CoreDsl.exec;
 
 /**
  * DSL for manipulating Socket.IO messages
  */
 public class SocketIO {
 
-  private Packet<String> packet;
-
-  private Ws websocket;
+  private Ws webSocket;
   private String nameSpace;
+  private SocketIOProtocol socketIOProtocol;
+  private static SocketIOProtocolFactory socketIOProtocolFactory = new DefaultSocketIOProtocolFactory();
 
-  private SocketIO(Ws ws) {
-    this(ws, "");
+  public static void setSocketIOProtocolFactory(SocketIOProtocolFactory socketIOProtocolFactory) {
+    SocketIO.socketIOProtocolFactory = socketIOProtocolFactory;
   }
 
-  private SocketIO(Ws ws, String nameSpace) {
-    this.websocket = ws;
+  private SocketIO(Ws webSocket) {
+    this(webSocket, "");
+  }
+
+  private SocketIO(Ws webSocket, String nameSpace) {
+    this.webSocket = webSocket;
     this.nameSpace = nameSpace;
-    this.packet = TextFrame.getInstance();
+    this.socketIOProtocol = socketIOProtocolFactory.createSocketIOProtocol(this.webSocket);
   }
 
   /**
@@ -40,7 +47,7 @@ public class SocketIO {
    * @return
    */
   public static SocketIO socketIO(String name) {
-    return SocketIO.socketIO(name, "");
+    return SocketIO.socketIO(name, "/");
   }
 
   /**
@@ -54,21 +61,23 @@ public class SocketIO {
     return new SocketIO(ws(name), nameSpace);
   }
 
-  public WsConnectActionBuilder connect() {
-    return (websocket.connect("/socket.io/?EIO=4&transport=websocket")
-        .onConnected(exec(this.connectToNameSpace())));
+  public WsAwaitActionBuilder connect() {
+    return (webSocket.connect("/socket.io/?EIO=4&transport=websocket"));
+    // .onConnected(exec(...)));
   }
 
-  private WsSendTextActionBuilder connectToNameSpace() {
-    return websocket.sendText(packet.connectFrame(this.nameSpace));
+  public WsAwaitActionBuilder connectToNameSpace(String nameSpace) {
+    return socketIOProtocol.send(
+        new SocketIOPacket(0, nameSpace, Arrays.asList()));
   }
 
-  public WsSendTextActionBuilder disconnect() {
-    return websocket.sendText(packet.disconnectFrame(this.nameSpace));
+  public WsAwaitActionBuilder disconnectFromNameSpace(String nameSpace) {
+    return socketIOProtocol.send(
+        new SocketIOPacket(1, nameSpace, Arrays.asList()));
   }
 
   public ActionBuilder close() {
-    return websocket.close();
+    return webSocket.close();
   }
 
   /**
@@ -78,16 +87,16 @@ public class SocketIO {
    * @param arg
    * @return
    */
-  public WsSendTextActionBuilder sendTextSocketIO(String... arg) {
-    return websocket.sendText(session -> {
+  public WsAwaitActionBuilder send(String... arg) {
+    return socketIOProtocol.send(session -> {
 
-      String[] frameArgs = Arrays.stream(arg)
+      // create and return the SocketIOPacket
+
+      List<String> frameArgs = Arrays.stream(arg)
           .map(s -> evaluateEL(session, s))
-          .toArray(String[]::new);
+          .collect(Collectors.toList());
 
-      return packet.eventFrame(
-          (StringBody(this.nameSpace)).apply(session),
-          frameArgs);
+      return new SocketIOPacket(2, this.nameSpace, frameArgs);
     });
   }
 
@@ -98,11 +107,13 @@ public class SocketIO {
    * @param elArray
    * @return
    */
-  public WsSendTextActionBuilder sendTextSocketIO(String elArray) {
-    return websocket.sendText(session -> {
+  public WsAwaitActionBuilder send(String elArray) {
+    return socketIOProtocol.send(session -> {
+
+      // create and return the SocketIOPacket
 
       int size = getSize(session, elArray);
-      String[] frameArgs = new String[size];
+      List<String> frameArgsList = new ArrayList<>();
 
       for (int i = 0; i < size; i++) {
         String element = atIndex(session, elArray, i);
@@ -111,12 +122,9 @@ public class SocketIO {
           element = mapToJSON(session, elArray, i);
         }
 
-        frameArgs[i] = element;
+        frameArgsList.add(element);
       }
-
-      return packet.eventFrame(
-          (StringBody(this.nameSpace)).apply(session),
-          frameArgs);
+      return new SocketIOPacket(2, (StringBody(this.nameSpace)).apply(session), frameArgsList);
     });
   }
 
