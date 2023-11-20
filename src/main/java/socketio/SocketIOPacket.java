@@ -1,5 +1,6 @@
 package socketio;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SocketIOPacket {
@@ -16,5 +17,21 @@ public class SocketIOPacket {
     this.type = type;
     this.nsp = nsp;
     this.data = data;
+  }
+
+  // DSL for SocketIOPacket creation
+
+  public static SocketIOPacket packet(int type) {
+    return new SocketIOPacket(type, "/", new ArrayList<>());
+  }
+
+  public SocketIOPacket addData(String data) {
+    this.data.add(data);
+    return this;
+  }
+
+  public SocketIOPacket nsp(String nsp) {
+    this.nsp = nsp;
+    return this;
   }
 }

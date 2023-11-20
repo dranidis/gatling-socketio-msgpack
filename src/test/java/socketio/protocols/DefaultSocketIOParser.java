@@ -1,44 +1,57 @@
 package socketio.protocols;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import socketio.SocketIOPacket;
-import socketio.SocketIOType;
-import socketio.TextFrame;
 
 public class DefaultSocketIOParser implements SocketIOParser<String> {
 
+  private static final String VERSION = "4";
+
   @Override
   public String encode(SocketIOPacket packet) {
-    String textFrame = "";
-    switch (SocketIOType.fromValue(packet.type)) {
-      case CONNECT:
-        textFrame = TextFrame.getInstance()
-            .connectFrame(packet.nsp);
-        break;
-      case DISCONNECT:
-        textFrame = TextFrame.getInstance()
-            .disconnectFrame(packet.nsp);
-        break;
-      case EVENT:
-        textFrame = TextFrame.getInstance()
-            .eventFrame(packet.nsp, packet.data.toArray(new String[0]));
-        break;
-      // case 3:
-      // textFrame = TextFrame.getInstance().ackFrame(packet);
-      // case 4:
-      // textFrame = TextFrame.getInstance().errorFrame(packet);
-      // case 5:
-      // textFrame = TextFrame.getInstance().binaryEventFrame(packet);
-      // case 6:
-      // textFrame = TextFrame.getInstance().binaryAckFrame(packet);
-      default:
-        throw new IllegalArgumentException("Invalid packet type");
+    String nameSpace = packet.nsp;
+
+    StringBuffer textFrame = new StringBuffer()
+        .append(VERSION)
+        .append(packet.type);
+
+    if (notDefaultNamespace(nameSpace)) {
+      textFrame.append(
+          nameSpace.startsWith("/") ? "" : "/");
+      textFrame.append(nameSpace);
+
+      if (!packet.data.isEmpty()) {
+        textFrame.append(",");
+      }
     }
-    return textFrame;
+
+    if (!packet.data.isEmpty()) {
+      textFrame.append(dataToString(packet.data));
+    }
+
+    return textFrame.toString();
   }
 
   @Override
   public String packetType() {
     return "text";
+  }
+
+  /**
+   * The default namespace is "/". "" can also be used to represent the default
+   * 
+   * @param nameSpace
+   * @return
+   */
+  protected boolean notDefaultNamespace(String nameSpace) {
+    return !nameSpace.equals("/") && !nameSpace.equals("");
+  }
+
+  protected String dataToString(List<String> data) {
+    return data.stream().map(s -> s.startsWith("{") ? s : "\"" + s + "\"")
+        .collect(Collectors.joining(",", "[", "]"));
   }
 
 }
