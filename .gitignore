@@ -2,3 +2,4 @@
 /.mvn/wrapper/*.jar
 
 node_modules
+**/data_live.json
