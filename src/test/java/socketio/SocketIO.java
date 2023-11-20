@@ -9,7 +9,6 @@ import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
 import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
-import io.gatling.javaapi.http.WsConnectActionBuilder;
 import socketio.protocols.DefaultSocketIOProtocolFactory;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
@@ -62,18 +61,25 @@ public class SocketIO {
   }
 
   public WsAwaitActionBuilder connect() {
-    return (webSocket.connect("/socket.io/?EIO=4&transport=websocket"));
+    return (webSocket.connect(
+        "/socket.io/?EIO=4&transport=websocket"));
     // .onConnected(exec(...)));
   }
 
   public WsAwaitActionBuilder connectToNameSpace(String nameSpace) {
     return socketIOProtocol.send(
-        new SocketIOPacket(0, nameSpace, Arrays.asList()));
+        new SocketIOPacket(
+            SocketIOType.CONNECT.getValue(),
+            nameSpace,
+            Arrays.asList()));
   }
 
   public WsAwaitActionBuilder disconnectFromNameSpace(String nameSpace) {
     return socketIOProtocol.send(
-        new SocketIOPacket(1, nameSpace, Arrays.asList()));
+        new SocketIOPacket(
+            SocketIOType.DISCONNECT.getValue(),
+            nameSpace,
+            Arrays.asList()));
   }
 
   public ActionBuilder close() {

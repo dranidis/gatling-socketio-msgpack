@@ -3,7 +3,7 @@ package socketio;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TextFrame implements PacketFrame<String> {
+public class TextFrame {
 
   private TextFrame() {
   }
@@ -50,17 +50,14 @@ public class TextFrame implements PacketFrame<String> {
     return frame;
   }
 
-  @Override
   public String eventFrame(String nameSpace, String... arg) {
     return textFrame(EVENT_FRAME, nameSpace) + dataToString(arg);
   }
 
-  @Override
   public String connectFrame(String nameSpace) {
     return textFrame(CONNECT_FRAME, nameSpace);
   }
 
-  @Override
   public String disconnectFrame(String nameSpace) {
     return textFrame(DISCONNECT_FRAME, nameSpace);
   }

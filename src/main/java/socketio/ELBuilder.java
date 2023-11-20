@@ -3,6 +3,10 @@ package socketio;
 /**
  * DSL for manipulating EL expressions
  * https://gatling.io/docs/gatling/reference/current/core/session/el/
+ * <p>
+ * Gatling EL uses a #{attributeName} syntax to define placeholders to be
+ * replaced with the value of the matching attributeName attribute’s value
+ * stored in the virtual user’s Session.
  */
 public class ELBuilder {
 

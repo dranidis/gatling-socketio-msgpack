@@ -27,7 +27,7 @@ public class MsgPackSocketIOProtocol implements SocketIOProtocol {
 
   @Override
   public WsAwaitActionBuilder send(SocketIOPacket packet) {
-    return this.websocket.sendBytes(socketIOPacketToString(packet));
+    return this.websocket.sendBytes(socketIOPacketToMessagePack(packet));
 
   }
 
@@ -35,11 +35,11 @@ public class MsgPackSocketIOProtocol implements SocketIOProtocol {
   public WsAwaitActionBuilder send(Function<Session, SocketIOPacket> sessionFunction) {
     return this.websocket.sendBytes(session -> {
       SocketIOPacket packet = sessionFunction.apply(session);
-      return this.socketIOPacketToString(packet);
+      return this.socketIOPacketToMessagePack(packet);
     });
   }
 
-  private byte[] socketIOPacketToString(SocketIOPacket packet) {
+  private byte[] socketIOPacketToMessagePack(SocketIOPacket packet) {
     try {
       if (packet.type == SocketIOType.DISCONNECT.getValue()) {
         return objectMapper.writeValueAsBytes(

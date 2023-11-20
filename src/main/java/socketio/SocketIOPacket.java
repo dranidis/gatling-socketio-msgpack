@@ -3,6 +3,8 @@ package socketio;
 import java.util.List;
 
 public class SocketIOPacket {
+  // TODO: make private
+  // TODO: change type to SocketIOType
   public int type;
   public String nsp;
   public List<String> data;

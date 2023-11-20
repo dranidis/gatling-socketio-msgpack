@@ -3,12 +3,10 @@
     "messages": [
       {
         "pause": 0,
-        "nsp": "/events/live/en",
         "data": ["room:join", "meta"]
       },
       {
         "pause": 2,
-        "nsp": "/events/live/en",
         "data": [
           "room:join",
           "odd",
@@ -26,12 +24,10 @@
     "messages": [
       {
         "pause": 1,
-        "nsp": "/events/live/en",
         "data": ["room:join", "meta"]
       },
       {
         "pause": 1,
-        "nsp": "/events/live/en",
         "data": [
           "room:join",
           "odd",

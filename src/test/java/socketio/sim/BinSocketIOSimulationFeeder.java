@@ -36,7 +36,7 @@ public class BinSocketIOSimulationFeeder extends Simulation {
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
       // the data is an array of strings (e.g. event and message) and JSON objects
-      .feed(jsonFile("data_live.json").circular())
+      .feed(jsonFile("data.json").circular())
       .foreach("#{messages}", "message").on(
           pause("#{message.pause}")
               .exec(socketIO("send message", namespace)
@@ -53,13 +53,13 @@ public class BinSocketIOSimulationFeeder extends Simulation {
 
         sceneNoChecks.injectOpen(
 
-            atOnceUsers(10)
+            atOnceUsers(1)
 
-            ,
+        // ,
 
-            nothingFor(4), // 1
-            atOnceUsers(10), // 2
-            rampUsers(10).during(5)
+        // nothingFor(4), // 1
+        // atOnceUsers(10), // 2
+        // rampUsers(10).during(5)
         // , // 3
         // constantUsersPerSec(20).during(15)
         // , // 4
