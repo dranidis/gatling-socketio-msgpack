@@ -1,14 +1,12 @@
 package socketio;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SocketIOPacket {
-  // TODO: make private
   // TODO: change type to SocketIOType
-  public int type;
-  public String nsp;
-  public List<String> data;
+  private int type;
+  private String nsp;
+  private List<String> data;
 
   public SocketIOPacket() {
   }
@@ -19,19 +17,20 @@ public class SocketIOPacket {
     this.data = data;
   }
 
-  // DSL for SocketIOPacket creation
-
-  public static SocketIOPacket packet(int type) {
-    return new SocketIOPacket(type, "/", new ArrayList<>());
+  public int getType() {
+    return type;
   }
 
-  public SocketIOPacket addData(String data) {
-    this.data.add(data);
-    return this;
+  public String getNsp() {
+    return nsp;
   }
 
-  public SocketIOPacket nsp(String nsp) {
+  public List<String> getData() {
+    return data;
+  }
+
+  public void setNsp(String nsp) {
     this.nsp = nsp;
-    return this;
   }
+
 }

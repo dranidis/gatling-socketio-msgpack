@@ -19,9 +19,9 @@ public class MessagePackSocketIOParser implements SocketIOParser<byte[]> {
   @Override
   public byte[] encode(SocketIOPacket packet) {
     try {
-      if (packet.type == SocketIOType.DISCONNECT.getValue()) {
+      if (packet.getType() == SocketIOType.DISCONNECT.getValue()) {
         return objectMapper.writeValueAsBytes(
-            new SocketIODisconnectPacket(packet.type, packet.nsp));
+            new SocketIODisconnectPacket(packet.getType(), packet.getNsp()));
       } else {
         return objectMapper.writeValueAsBytes(packet);
       }

@@ -11,24 +11,25 @@ public class DefaultSocketIOParser implements SocketIOParser<String> {
 
   @Override
   public String encode(SocketIOPacket packet) {
-    String nameSpace = packet.nsp;
+    String nameSpace = packet.getNsp();
+    List<String> data = packet.getData();
 
     StringBuffer textFrame = new StringBuffer()
         .append(VERSION)
-        .append(packet.type);
+        .append(packet.getType());
 
     if (notDefaultNamespace(nameSpace)) {
       textFrame.append(
           nameSpace.startsWith("/") ? "" : "/");
       textFrame.append(nameSpace);
 
-      if (!packet.data.isEmpty()) {
+      if (!data.isEmpty()) {
         textFrame.append(",");
       }
     }
 
-    if (!packet.data.isEmpty()) {
-      textFrame.append(dataToString(packet.data));
+    if (!data.isEmpty()) {
+      textFrame.append(dataToString(data));
     }
 
     return textFrame.toString();
