@@ -7,11 +7,11 @@ import io.gatling.javaapi.http.Ws;
 import io.gatling.javaapi.http.WsAwaitActionBuilder;
 import socketio.SocketIOPacket;
 import socketio.SocketIOProtocol;
-import socketio.SocketIOType;
-import socketio.TextFrame;
 
 public class DefaultSocketIOProtocol implements SocketIOProtocol {
+
   private Ws websocket;
+  private Parser<String> parser = new DefaultParser();
 
   public DefaultSocketIOProtocol(Ws websocket) {
     this.websocket = websocket;
@@ -19,7 +19,7 @@ public class DefaultSocketIOProtocol implements SocketIOProtocol {
 
   @Override
   public WsAwaitActionBuilder send(SocketIOPacket packet) {
-    return this.websocket.sendText(socketIOPacketToString(packet));
+    return this.websocket.sendText(parser.encode(packet));
 
   }
 
@@ -27,37 +27,8 @@ public class DefaultSocketIOProtocol implements SocketIOProtocol {
   public WsAwaitActionBuilder send(Function<Session, SocketIOPacket> sessionFunction) {
     return this.websocket.sendText(session -> {
       SocketIOPacket packet = sessionFunction.apply(session);
-      return this.socketIOPacketToString(packet);
+      return parser.encode(packet);
     });
-  }
-
-  private String socketIOPacketToString(SocketIOPacket packet) {
-    String textFrame = "";
-    switch (SocketIOType.fromValue(packet.type)) {
-    case CONNECT:
-      textFrame = TextFrame.getInstance()
-          .connectFrame(packet.nsp);
-      break;
-    case DISCONNECT:
-      textFrame = TextFrame.getInstance()
-          .disconnectFrame(packet.nsp);
-      break;
-    case EVENT:
-      textFrame = TextFrame.getInstance()
-          .eventFrame(packet.nsp, packet.data.toArray(new String[0]));
-      break;
-    // case 3:
-    //   textFrame = TextFrame.getInstance().ackFrame(packet);
-    // case 4:
-    //   textFrame = TextFrame.getInstance().errorFrame(packet);
-    // case 5:
-    //   textFrame = TextFrame.getInstance().binaryEventFrame(packet);
-    // case 6:
-    //   textFrame = TextFrame.getInstance().binaryAckFrame(packet);
-    default:
-      throw new IllegalArgumentException("Invalid packet type");
-    }
-    return textFrame;
   }
 
 }
