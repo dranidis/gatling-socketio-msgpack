@@ -19,9 +19,9 @@ public class UnifiedSocketIOProtocol<T> implements SocketIOProtocol {
   }
 
   @Override
-  public WsAwaitActionBuilder send(SocketIOPacket packet) {
-    if (parser.packetType() == "binary") {
-      return this.websocket.sendBytes((byte[]) parser.encode(packet));
+  public WsAwaitActionBuilder<?, ?> send(SocketIOPacket packet) {
+    if (parser.packetType().equals("binary")) {
+      return (WsAwaitActionBuilder<?, ?>) this.websocket.sendBytes((byte[]) parser.encode(packet));
     } else {
       return this.websocket.sendText((String) parser.encode(packet));
     }
@@ -30,7 +30,7 @@ public class UnifiedSocketIOProtocol<T> implements SocketIOProtocol {
 
   @Override
   public WsAwaitActionBuilder send(Function<Session, SocketIOPacket> sessionFunction) {
-    if (parser.packetType() == "binary") {
+    if (parser.packetType().equals("binary")) {
       return this.websocket.sendBytes(session -> {
         SocketIOPacket packet = sessionFunction.apply(session);
         return (byte[]) parser.encode(packet);
