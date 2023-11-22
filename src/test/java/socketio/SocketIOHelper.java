@@ -3,6 +3,15 @@ package socketio;
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.*;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import org.msgpack.jackson.dataformat.MessagePackFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.gatling.javaapi.core.*;
 import io.gatling.javaapi.http.*;
 
@@ -10,7 +19,11 @@ public class SocketIOHelper {
 
   private static boolean isDebug = false;
 
+  // Instantiate ObjectMapper for MessagePack
+  private static ObjectMapper objectMapper = new ObjectMapper(new MessagePackFactory());
+
   public static void setDebug(boolean debug) {
+    System.out.println("DEBUG is " + debug);
     isDebug = debug;
   }
 
@@ -68,5 +81,40 @@ public class SocketIOHelper {
             regex("(.*)").saveAs("whole_message"),
             regex("42.*" + eventName + "...([^\"]*)").saveAs(toSessionKey));
   }
+
+  public static CheckBuilder checkData = bodyBytes().transform(bytes -> {
+    SocketIOPacket packet = null;
+
+    try {
+      packet = objectMapper.readValue(bytes, SocketIOPacket.class);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    /**
+     * first element in the data array is the event name and the second element is
+     * the message
+     */
+    List<String> data = packet.getData();
+
+    data.stream().forEach(System.out::println);
+
+    return data;
+  }).saveAs("response");
+
+  public static CheckBuilder checkConnectionNamespace = bodyBytes().transform(bytes -> {
+    TypeReference<Map<String, Object>> typeReference = new TypeReference<Map<String, Object>>() {
+    };
+    Map<String, Object> xs = null;
+    try {
+      xs = objectMapper.readValue(bytes, typeReference);
+      // xs.entrySet().stream().forEach(System.out::println);
+
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return xs.get("data");
+  }).saveAs("response");
 
 }

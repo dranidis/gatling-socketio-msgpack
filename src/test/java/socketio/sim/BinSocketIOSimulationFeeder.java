@@ -9,15 +9,18 @@ import io.gatling.javaapi.http.*;
 import socketio.SocketIO;
 import socketio.protocols.MsgpackSocketIOProtocolFactory;
 
+import static socketio.SocketIOHelper.*;
+
 public class BinSocketIOSimulationFeeder extends Simulation {
 
   HttpProtocolBuilder httpProtocol = http
-      .wsBaseUrl("ws://localhost:5555")
+      .wsBaseUrl("ws://localhost:3002")
       .wsReconnect()
       .wsMaxReconnects(5)
       .wsAutoReplySocketIo4();
 
   {
+    setDebug(true);
     SocketIO.setSocketIOProtocolFactory(new MsgpackSocketIOProtocolFactory());
   }
 
@@ -29,9 +32,16 @@ public class BinSocketIOSimulationFeeder extends Simulation {
       // should I read this from the data?
       // does it connect to other namespaces?
       //
-      .exec(socketIO("connect to socket.io").connect())
+      .exec(socketIO("connect to socket.io").connect()
+          .await(30)
+          .on(checkWSConnectionMessageSID))
       .exec(socketIO("connect to namespace")
-          .connectToNameSpace(namespace))
+          .connectToNameSpace(namespace)
+          .await(30)
+          .on(ws.checkBinaryMessage("check namespace")
+              .check(checkConnectionNamespace)))
+
+      .exec(debugSessionValues("sid", "server_sid", "namespace", "whole_message", "response"))
 
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
@@ -40,7 +50,11 @@ public class BinSocketIOSimulationFeeder extends Simulation {
       .foreach("#{messages}", "message").on(
           pause("#{message.pause}")
               .exec(socketIO("send message", namespace)
-                  .send("#{message.data}")))
+                  .send("#{message.data}")
+                  .await(30)
+                  .on(ws.checkBinaryMessage("check response")
+                      .check(checkConnectionNamespace)))
+              .exec(debugSessionValues("response")))
 
       // disconnect from the default namespace
       .exec(socketIO("disconnect from namespace")
