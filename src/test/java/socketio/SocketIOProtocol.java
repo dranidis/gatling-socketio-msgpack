@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 
 public interface SocketIOProtocol {
 
-  WsAwaitActionBuilder send(SocketIOPacket packet);
+  WsAwaitActionBuilder<?, ?> send(SocketIOPacket packet);
 
-  WsAwaitActionBuilder send(@Nonnull Function<Session, SocketIOPacket> sessionFunction);
+  WsAwaitActionBuilder<?, ?> send(@Nonnull Function<Session, SocketIOPacket> sessionFunction);
 }

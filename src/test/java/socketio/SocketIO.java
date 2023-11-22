@@ -60,13 +60,13 @@ public class SocketIO {
     return new SocketIO(ws(name), nameSpace);
   }
 
-  public WsAwaitActionBuilder connect() {
+  public WsAwaitActionBuilder<?, ?> connect() {
     return (webSocket.connect(
         "/socket.io/?EIO=4&transport=websocket"));
     // .onConnected(exec(...)));
   }
 
-  public WsAwaitActionBuilder connectToNameSpace(String nameSpace) {
+  public WsAwaitActionBuilder<?, ?> connectToNameSpace(String nameSpace) {
     return socketIOProtocol.send(
         new SocketIOPacket(
             SocketIOType.CONNECT.getValue(),
@@ -74,7 +74,7 @@ public class SocketIO {
             Arrays.asList()));
   }
 
-  public WsAwaitActionBuilder disconnectFromNameSpace(String nameSpace) {
+  public WsAwaitActionBuilder<?, ?> disconnectFromNameSpace(String nameSpace) {
     return socketIOProtocol.send(
         new SocketIOPacket(
             SocketIOType.DISCONNECT.getValue(),
@@ -93,7 +93,7 @@ public class SocketIO {
    * @param arg
    * @return
    */
-  public WsAwaitActionBuilder send(String... arg) {
+  public WsAwaitActionBuilder<?, ?> send(String... arg) {
     return socketIOProtocol.send(session -> {
 
       // create and return the SocketIOPacket
@@ -113,7 +113,7 @@ public class SocketIO {
    * @param elArray
    * @return
    */
-  public WsAwaitActionBuilder send(String elArray) {
+  public WsAwaitActionBuilder<?, ?> send(String elArray) {
     return socketIOProtocol.send(session -> {
 
       // create and return the SocketIOPacket
@@ -130,7 +130,7 @@ public class SocketIO {
 
         frameArgsList.add(element);
       }
-      return new SocketIOPacket(2, (StringBody(this.nameSpace)).apply(session), frameArgsList);
+      return new SocketIOPacket(2, evaluateEL(session, this.nameSpace), frameArgsList);
     });
   }
 
