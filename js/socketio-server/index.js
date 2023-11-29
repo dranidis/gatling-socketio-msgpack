@@ -36,7 +36,7 @@ namespace.on("connection", (socket) => {
     namespace.emit("broadcast", "admin they say: " + msg);
   });
 
-  socket.on("requet", (msg) => {
+  socket.on("request", (msg) => {
     console.log("request message: " + msg);
     socket.emit("response", "on message" + msg);
   });

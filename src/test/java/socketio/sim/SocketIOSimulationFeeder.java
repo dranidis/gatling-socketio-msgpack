@@ -51,7 +51,7 @@ public class SocketIOSimulationFeeder extends Simulation {
 
     setUp(
 
-        sceneNoChecks.injectOpen(atOnceUsers(10))
+        sceneNoChecks.injectOpen(atOnceUsers(2))
 
     ).protocols(httpProtocol);
   }

@@ -112,7 +112,33 @@ public class DefaultSocketIOParserTest {
           }
         })
         .build();
-    String expected = "42/namespace,[\"event\",\"data\",{\"name\":\"Jim\",\"id\":\"42\"}]";
+    String expected = "42/namespace,[\"event\",\"data\",{\"name\":\"Jim\",\"id\":42}]";
+    assertEquals(expected, parser.encode(packet));
+  }
+
+  @Test
+  public void when_a_frame_has_a_complex_json_it_handles_it_correctly() {
+    SocketIOPacket packet = new SocketIOPacketBuilder(2)
+        .nsp("namespace")
+        .addData("event")
+        .addData("data")
+        .addData(new HashMap<String, Object>() {
+          {
+            put("id", 42);
+            put("name", "Jim");
+            put("address", new HashMap<String, Object>() {
+              {
+                put("street", "123 Main St");
+                put("city", "Anytown");
+                put("state", "NY");
+                put("zip", "12345");
+              }
+            });
+
+          }
+        })
+        .build();
+    String expected = "42/namespace,[\"event\",\"data\",{\"address\":{\"zip\":\"12345\",\"city\":\"Anytown\",\"street\":\"123 Main St\",\"state\":\"NY\"},\"name\":\"Jim\",\"id\":42}]";
     assertEquals(expected, parser.encode(packet));
   }
 

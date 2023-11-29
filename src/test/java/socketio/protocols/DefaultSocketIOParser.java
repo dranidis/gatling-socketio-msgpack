@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import socketio.SocketIOPacket;
 
 public class DefaultSocketIOParser implements SocketIOParser<String> {
@@ -64,10 +66,8 @@ public class DefaultSocketIOParser implements SocketIOParser<String> {
 
       } else if (o instanceof Map<?, ?>) {
 
-        Map<?, ?> map = (Map<?, ?>) o;
-        String s = map.entrySet().stream()
-            .map(e -> "\"" + e.getKey() + "\":\"" + e.getValue() + "\"")
-            .collect(Collectors.joining(",", "{", "}"));
+        @SuppressWarnings("unchecked")
+        String s = convertMapToJson((Map<String, Object>) o);
         strings.add(s);
 
       } else {
@@ -76,6 +76,17 @@ public class DefaultSocketIOParser implements SocketIOParser<String> {
     }
 
     return strings.stream().collect(Collectors.joining(",", "[", "]"));
+  }
+
+  private String convertMapToJson(Map<String, Object> dataMap) {
+    try {
+      ObjectMapper objectMapper = new ObjectMapper();
+
+      return objectMapper.writeValueAsString(dataMap);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
   }
 
 }

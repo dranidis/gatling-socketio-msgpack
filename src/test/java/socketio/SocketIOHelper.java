@@ -108,10 +108,7 @@ public class SocketIOHelper {
     Map<String, Object> xs = null;
     try {
       xs = objectMapper.readValue(bytes, typeReference);
-      // xs.entrySet().stream().forEach(System.out::println);
-
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     return xs.get("data");
