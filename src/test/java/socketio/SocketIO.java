@@ -2,8 +2,13 @@ package socketio;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.gatling.javaapi.core.ActionBuilder;
 import io.gatling.javaapi.core.Session;
@@ -98,7 +103,7 @@ public class SocketIO {
 
       // create and return the SocketIOPacket
 
-      List<String> frameArgs = Arrays.stream(arg)
+      List<Object> frameArgs = Arrays.stream(arg)
           .map(s -> evaluateEL(session, s))
           .collect(Collectors.toList());
 
@@ -119,19 +124,40 @@ public class SocketIO {
       // create and return the SocketIOPacket
 
       int size = getSize(session, elArray);
-      List<String> frameArgsList = new ArrayList<>();
+      List<Object> frameArgsList = new ArrayList<>();
 
       for (int i = 0; i < size; i++) {
         String element = atIndex(session, elArray, i);
 
-        if (element.startsWith("Map")) {
-          element = mapToJSON(session, elArray, i);
-        }
+        Object elementToAdd = null;
 
-        frameArgsList.add(element);
+        // Maps in EL string representation start with the
+        // word "Map". If the element is a Map, convert it to
+        // Map<String, Object>.
+        if (element.startsWith("Map")) {
+          String jsonString = mapToJSON(session, elArray, i);
+          elementToAdd = parseJsonToMap(jsonString);
+        } else {
+          elementToAdd = element;
+        }
+        frameArgsList.add(elementToAdd);
+
       }
       return new SocketIOPacket(2, evaluateEL(session, this.nameSpace), frameArgsList);
     });
+  }
+
+  private Map<String, Object> parseJsonToMap(String json) {
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, Object> map = new HashMap<>();
+
+    try {
+      map = mapper.readValue(json, new TypeReference<Map<String, Object>>() {
+      });
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
   }
 
   private String mapToJSON(Session session, String arg, int i) {

@@ -3,3 +3,6 @@
 
 node_modules
 **/data_live.json
+
+
+/src/test/resources/feeder

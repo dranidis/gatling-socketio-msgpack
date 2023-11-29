@@ -95,7 +95,7 @@ public class SocketIOHelper {
      * first element in the data array is the event name and the second element is
      * the message
      */
-    List<String> data = packet.getData();
+    List<Object> data = packet.getData();
 
     data.stream().forEach(System.out::println);
 

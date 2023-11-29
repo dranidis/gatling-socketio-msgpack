@@ -6,12 +6,12 @@ public class SocketIOPacket {
   // TODO: change type to SocketIOType
   private int type;
   private String nsp;
-  private List<String> data;
+  private List<Object> data;
 
   public SocketIOPacket() {
   }
 
-  public SocketIOPacket(int type, String nsp, List<String> data) {
+  public SocketIOPacket(int type, String nsp, List<Object> data) {
     this.type = type;
     this.nsp = nsp;
     this.data = data;
@@ -25,7 +25,7 @@ public class SocketIOPacket {
     return nsp;
   }
 
-  public List<String> getData() {
+  public List<Object> getData() {
     return data;
   }
 
