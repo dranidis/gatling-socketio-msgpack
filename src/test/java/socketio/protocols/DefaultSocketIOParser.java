@@ -1,8 +1,9 @@
 package socketio.protocols;
 
 import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import socketio.SocketIOPacket;
 
@@ -51,14 +52,30 @@ public class DefaultSocketIOParser implements SocketIOParser<String> {
     return !nameSpace.equals("/") && !nameSpace.equals("");
   }
 
-  // TODO: test to send with a text protocol,
-  // a JSON object to a socket.io server
   protected String dataToString(List<Object> data) {
 
-    Stream<String> stringStream = data.stream().filter(o -> o instanceof String).map(o -> (String) o)
-        .map(s -> s.startsWith("{") ? s : "\"" + s + "\"");
+    List<String> strings = new ArrayList<String>();
 
-    return stringStream.collect(Collectors.joining(",", "[", "]"));
+    for (Object o : data) {
+      if (o instanceof String) {
+
+        String s = (String) o;
+        strings.add("\"" + s + "\"");
+
+      } else if (o instanceof Map<?, ?>) {
+
+        Map<?, ?> map = (Map<?, ?>) o;
+        String s = map.entrySet().stream()
+            .map(e -> "\"" + e.getKey() + "\":\"" + e.getValue() + "\"")
+            .collect(Collectors.joining(",", "{", "}"));
+        strings.add(s);
+
+      } else {
+        throw new RuntimeException("dataToString: " + o.getClass().getName());
+      }
+    }
+
+    return strings.stream().collect(Collectors.joining(",", "[", "]"));
   }
 
 }

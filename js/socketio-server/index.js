@@ -51,7 +51,11 @@ live.on("connection", (socket) => {
   console.log("someone connected to the live namespace: " + socket.id);
 
   socket.on("room:join", (msg1, msg2) => {
+    console.log(typeof msg2);
     console.log("room:join: " + msg1 + " " + JSON.stringify(msg2));
+    if (msg1 === "odd") {
+      console.log(msg2.oddId, msg2.eventId, msg2.marketId);
+    }
   });
 
   socket.on("room:leave", (msg) => {

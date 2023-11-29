@@ -46,7 +46,7 @@ public class BinSocketIOSimulationFeeder extends Simulation {
       // read messages from the data file
       // each message has a pause time, a namespace and a data field.
       // the data is an array of strings (e.g. event and message) and JSON objects
-      .feed(jsonFile("script.json").circular())
+      .feed(jsonFile("input/script.json").circular())
       .foreach("#{messages}", "message").on(
           pause("#{message.pause}")
               .exec(socketIO("send message", namespace)

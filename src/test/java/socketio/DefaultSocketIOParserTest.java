@@ -3,6 +3,8 @@ package socketio;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.HashMap;
+
 import org.junit.Test;
 
 import socketio.protocols.DefaultSocketIOParser;
@@ -102,9 +104,15 @@ public class DefaultSocketIOParserTest {
         .nsp("namespace")
         .addData("event")
         .addData("data")
-        .addData("{\"id\": \"42\"}")
+        .addData(new HashMap<String, Object>() {
+          {
+            put("id", 42);
+            put("name", "Jim");
+
+          }
+        })
         .build();
-    String expected = "42/namespace,[\"event\",\"data\",{\"id\": \"42\"}]";
+    String expected = "42/namespace,[\"event\",\"data\",{\"name\":\"Jim\",\"id\":\"42\"}]";
     assertEquals(expected, parser.encode(packet));
   }
 

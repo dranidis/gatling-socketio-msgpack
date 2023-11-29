@@ -9,7 +9,7 @@ public class SocketIOPacketBuilder {
     this.packet = new SocketIOPacket(type, "/", new ArrayList<>());
   }
 
-  public SocketIOPacketBuilder addData(String data) {
+  public SocketIOPacketBuilder addData(Object data) {
     this.packet.getData().add(data);
     return this;
   }
